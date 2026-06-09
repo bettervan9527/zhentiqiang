@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标记功能调试</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background: #667eea;
+            color: white;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        .question-btn {
+            width: 50px;
+            height: 50px;
+            margin: 5px;
+            background: #f0f0f0;
+            color: #333;
+        }
+        .question-btn.marked {
+            background: #ff9800;
+            color: white;
+        }
+        .output {
+            background: #f5f5f5;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .year-btn {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #f0f0f0;
+            color: #333;
+        }
+        .year-btn.active {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>标记功能调试工具</h1>
+    
+    <div class="section">
+        <h2>1. 选择年份</h2>
+        <button class="year-btn active" onclick="selectYear('2025')">2025年</button>
+        <button class="year-btn" onclick="selectYear('2024')">2024年</button>
+        <button class="year-btn" onclick="selectYear('2023')">2023年</button>
+    </div>
+    
+    <div class="section">
+        <h2>2. 题号列表（点击标记/取消标记）</h2>
+        <div id="questionButtons"></div>
+    </div>
+    
+    <div class="section">
+        <h2>3. 操作</h2>
+        <button onclick="viewMarks()">查看标记状态</button>
+        <button onclick="clearMarks()">清空所有标记</button>
+        <button onclick="testPersistence()">测试持久化</button>
+    </div>
+    
+    <div class="section">
+        <h2>4. 调试信息</h2>
+        <div class="output" id="output">等待操作...</div>
+    </div>
+    
+    <script>
+        let currentYear = '2025';
+        let markedQuestions = new Set();
+        
+        // 初始化
+        function init() {
+            loadFromStorage();
+            generateQuestions();
+            viewMarks();
+        }
+        
+        // 生成题号按钮
+        function generateQuestions() {
+            const container = document.getElementById('questionButtons');
+            container.innerHTML = '';
+            
+            for (let i = 1; i <= 10; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'question-btn';
+                btn.textContent = i;
+                
+                const key = `${currentYear}_${i}`;
+                if (markedQuestions.has(key)) {
+                    btn.classList.add('marked');
+                }
+                
+                btn.onclick = () => toggleMark(i);
+                container.appendChild(btn);
+            }
+        }
+        
+        // 切换标记
+        function toggleMark(num) {
+            const key = `${currentYear}_${num}`;
+            
+            if (markedQuestions.has(key)) {
+                markedQuestions.delete(key);
+                log(`✅ 取消标记: ${key}`);
+            } else {
+                markedQuestions.add(key);
+                log(`✅ 已标记: ${key}`);
+            }
+            
+            // 保存到localStorage
+            saveToStorage();
+            
+            // 重新生成按钮
+            generateQuestions();
+            
+            // 显示当前状态
+            viewMarks();
+        }
+        
+        // 选择年份
+        function selectYear(year) {
+            currentYear = year;
+            
+            // 更新年份按钮状态
+            document.querySelectorAll('.year-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent === year + '年') {
+                    btn.classList.add('active');
+                }
+            });
+            
+            log(`📅 切换到 ${year} 年`);
+            
+            // 重新生成题号按钮
+            generateQuestions();
+            
+            // 显示当前状态
+            viewMarks();
+        }
+        
+        // 查看标记状态
+        function viewMarks() {
+            let output = '📊 当前标记状态:\n\n';
+            output += `当前年份: ${currentYear}\n`;
+            output += `标记总数: ${markedQuestions.size}\n\n`;
+            
+            if (markedQuestions.size === 0) {
+                output += '(暂无标记)';
+            } else {
+                output += '已标记的题目:\n';
+                const marks = [...markedQuestions].sort();
+                marks.forEach(mark => {
+                    output += `  - ${mark}\n`;
+                });
+            }
+            
+            log(output);
+        }
+        
+        // 清空标记
+        function clearMarks() {
+            if (confirm('确定要清空所有标记吗？')) {
+                markedQuestions.clear();
+                saveToStorage();
+                generateQuestions();
+                log('✅ 已清空所有标记');
+            }
+        }
+        
+        // 测试持久化
+        function testPersistence() {
+            log('🔄 测试持久化...\n\n' +
+                '步骤:\n' +
+                '1. 标记几道题目\n' +
+                '2. 切换到其他年份\n' +
+                '3. 再切换回来\n' +
+                '4. 检查标记是否还在\n\n' +
+                '当前localStorage内容:\n' +
+                localStorage.getItem('markedQuestions'));
+        }
+        
+        // 保存到localStorage
+        function saveToStorage() {
+            try {
+                localStorage.setItem('markedQuestions', JSON.stringify([...markedQuestions]));
+                console.log('✅ 已保存到localStorage:', [...markedQuestions]);
+            } catch (e) {
+                console.error('❌ 保存失败:', e);
+            }
+        }
+        
+        // 从localStorage加载
+        function loadFromStorage() {
+            try {
+                const saved = localStorage.getItem('markedQuestions');
+                if (saved) {
+                    markedQuestions = new Set(JSON.parse(saved));
+                    console.log('✅ 已从localStorage加载:', [...markedQuestions]);
+                }
+            } catch (e) {
+                console.error('❌ 加载失败:', e);
+                markedQuestions = new Set();
+            }
+        }
+        
+        // 日志输出
+        function log(message) {
+            document.getElementById('output').textContent = message;
+            console.log(message);
+        }
+        
+        // 页面加载时初始化
+        window.onload = init;
+    </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+"""
+继续下载答案解析图片 (1700-2000)
+保存到 answer 文件夹
+"""
+from download_answers import download_batch_answers
+
+if __name__ == "__main__":
+    print("\n" + "="*70)
+    print("继续下载答案解析图片")
+    print("="*70)
+    print("\n配置:")
+    print("  范围: 1700 - 2000")
+    print("  保存目录: answer")
+    print("  共计: 301 个答案")
+    print("\n按 Ctrl+C 可随时中断，进度会自动保存")
+    print("="*70)
+    
+    input("\n按回车键开始下载...")
+    
+    try:
+        download_batch_answers(1700, 2000, "answer")
+    except KeyboardInterrupt:
+        print("\n\n已中断，进度已保存")
+        print("下次运行会自动继续")
+    except Exception as e:
+        print(f"\n错误: {e}")
+        import traceback
+        traceback.print_exc()

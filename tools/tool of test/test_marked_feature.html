@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标记功能测试</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #f5f7fa;
+        }
+        .section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            background: #667eea;
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        .btn-mark {
+            background: #ffb74d;
+        }
+        .btn-mark:hover {
+            background: #ffa726;
+        }
+        .btn-export {
+            background: #4caf50;
+        }
+        .btn-export:hover {
+            background: #45a049;
+        }
+        .btn-clear {
+            background: #e57373;
+        }
+        .btn-clear:hover {
+            background: #ef5350;
+        }
+        .question-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .question-btn {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            color: #333;
+            font-weight: 600;
+        }
+        .question-btn.marked {
+            background: #fff3e0;
+            border-color: #ffb74d;
+            color: #f57c00;
+        }
+        .output {
+            background: #f5f5f5;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .year-selector {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        .type-selector {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>📝 标记功能完整测试</h1>
+    
+    <div class="section">
+        <h2>1. 选择年份和类型</h2>
+        <select class="year-selector" id="yearSelect">
+            <option value="2025">2025年</option>
+            <option value="2024">2024年</option>
+            <option value="2023">2023年</option>
+            <option value="2022">2022年</option>
+        </select>
+        <select class="type-selector" id="typeSelect">
+            <option value="数学一">数学一</option>
+            <option value="数学二">数学二</option>
+            <option value="数学三">数学三</option>
+        </select>
+    </div>
+    
+    <div class="section">
+        <h2>2. 题目列表（点击标记/取消标记）</h2>
+        <div class="question-grid" id="questionGrid"></div>
+    </div>
+    
+    <div class="section">
+        <h2>3. 操作</h2>
+        <button class="btn-mark" onclick="showMarked()">显示标记</button>
+        <button class="btn-export" onclick="exportMarked()">导出标记</button>
+        <button class="btn-clear" onclick="clearCurrentMarks()">清空当前标记</button>
+        <button onclick="viewAllMarks()">查看所有标记</button>
+        <button onclick="testPersistence()">测试持久化</button>
+    </div>
+    
+    <div class="section">
+        <h2>4. 调试信息</h2>
+        <div class="output" id="output">等待操作...</div>
+    </div>
+    
+    <script>
+        let currentYear = '2025';
+        let currentType = '数学一';
+        let markedQuestions = {};
+        
+        // 初始化
+        function init() {
+            loadFromStorage();
+            generateQuestions();
+            updateOutput();
+            
+            // 监听选择器变化
+            document.getElementById('yearSelect').addEventListener('change', function(e) {
+                currentYear = e.target.value;
+                generateQuestions();
+                updateOutput();
+            });
+            
+            document.getElementById('typeSelect').addEventListener('change', function(e) {
+                currentType = e.target.value;
+                generateQuestions();
+                updateOutput();
+            });
+        }
+        
+        // 生成题号按钮
+        function generateQuestions() {
+            const container = document.getElementById('questionGrid');
+            container.innerHTML = '';
+            
+            const maxQuestions = (currentYear >= 2021 && currentYear <= 2024) ? 22 : 23;
+            
+            for (let i = 1; i <= maxQuestions; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'question-btn';
+                btn.textContent = i;
+                
+                const key = `${currentType}_${currentYear}`;
+                if (markedQuestions[key] && markedQuestions[key].includes(i)) {
+                    btn.classList.add('marked');
+                }
+                
+                btn.onclick = () => toggleMark(i);
+                container.appendChild(btn);
+            }
+        }
+        
+        // 切换标记
+        function toggleMark(num) {
+            const key = `${currentType}_${currentYear}`;
+            
+            if (!markedQuestions[key]) {
+                markedQuestions[key] = [];
+            }
+            
+            const index = markedQuestions[key].indexOf(num);
+            if (index > -1) {
+                markedQuestions[key].splice(index, 1);
+                log(`✅ 取消标记: ${key} - 第${num}题`);
+            } else {
+                markedQuestions[key].push(num);
+                log(`✅ 已标记: ${key} - 第${num}题`);
+            }
+            
+            saveToStorage();
+            generateQuestions();
+            updateOutput();
+        }
+        
+        // 显示标记
+        function showMarked() {
+            const key = `${currentType}_${currentYear}`;
+            const markedList = markedQuestions[key] ? markedQuestions[key].sort((a, b) => a - b) : [];
+            
+            if (markedList.length === 0) {
+                alert('当前年份和类型没有标记的题目');
+                return;
+            }
+            
+            let message = `${currentYear}年${currentType} 标记的题目:\n\n`;
+            message += markedList.join('、') + '\n\n';
+            message += `共 ${markedList.length} 道题目`;
+            
+            alert(message);
+            log(`📋 显示标记:\n${message}`);
+        }
+        
+        // 导出标记
+        function exportMarked() {
+            let totalMarked = 0;
+            let exportData = '考研数学历年真题 - 标记题目导出\n';
+            exportData += '='.repeat(50) + '\n\n';
+            
+            const mathTypes = ['数学一', '数学二', '数学三'];
+            const years = ['2025', '2024', '2023', '2022', '2021', '2020'];
+            
+            mathTypes.forEach(mathType => {
+                let hasMarked = false;
+                let typeData = `${mathType}\n` + '-'.repeat(50) + '\n';
+                
+                years.forEach(year => {
+                    const key = `${mathType}_${year}`;
+                    const markedList = markedQuestions[key] ? markedQuestions[key].sort((a, b) => a - b) : [];
+                    
+                    if (markedList.length > 0) {
+                        hasMarked = true;
+                        totalMarked += markedList.length;
+                        typeData += `${year}年: ${markedList.join('、')} (共${markedList.length}题)\n`;
+                    }
+                });
+                
+                if (hasMarked) {
+                    exportData += typeData + '\n';
+                }
+            });
+            
+            if (totalMarked === 0) {
+                alert('没有标记的题目可以导出');
+                return;
+            }
+            
+            exportData += '='.repeat(50) + '\n';
+            exportData += `总计标记: ${totalMarked} 道题目\n`;
+            exportData += `导出时间: ${new Date().toLocaleString('zh-CN')}\n`;
+            
+            // 创建下载
+            const blob = new Blob([exportData], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `考研数学标记题目_${new Date().toISOString().slice(0,10)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert(`已导出 ${totalMarked} 道标记题目`);
+            log(`📤 导出成功: ${totalMarked} 道题目`);
+        }
+        
+        // 清空当前标记
+        function clearCurrentMarks() {
+            const key = `${currentType}_${currentYear}`;
+            if (confirm(`确定要清空 ${currentYear}年${currentType} 的所有标记吗？`)) {
+                markedQuestions[key] = [];
+                saveToStorage();
+                generateQuestions();
+                updateOutput();
+                log(`✅ 已清空 ${key} 的所有标记`);
+            }
+        }
+        
+        // 查看所有标记
+        function viewAllMarks() {
+            let output = '📊 所有标记统计:\n\n';
+            let totalCount = 0;
+            
+            for (let key in markedQuestions) {
+                if (markedQuestions[key] && markedQuestions[key].length > 0) {
+                    const list = markedQuestions[key].sort((a, b) => a - b);
+                    output += `${key}: ${list.join('、')} (${list.length}题)\n`;
+                    totalCount += list.length;
+                }
+            }
+            
+            if (totalCount === 0) {
+                output += '(暂无标记)';
+            } else {
+                output += `\n总计: ${totalCount} 道题目`;
+            }
+            
+            log(output);
+        }
+        
+        // 测试持久化
+        function testPersistence() {
+            log('🔄 测试持久化...\n\n' +
+                '步骤:\n' +
+                '1. 标记几道题目\n' +
+                '2. 切换到其他年份/类型\n' +
+                '3. 再切换回来\n' +
+                '4. 检查标记是否还在\n\n' +
+                '当前localStorage内容:\n' +
+                JSON.stringify(markedQuestions, null, 2));
+        }
+        
+        // 更新输出
+        function updateOutput() {
+            const key = `${currentType}_${currentYear}`;
+            const markedList = markedQuestions[key] ? markedQuestions[key].sort((a, b) => a - b) : [];
+            
+            let output = `📅 当前: ${currentYear}年${currentType}\n`;
+            output += `📋 标记数: ${markedList.length}\n`;
+            if (markedList.length > 0) {
+                output += `📝 题号: ${markedList.join('、')}\n`;
+            }
+            output += '\n' + '-'.repeat(50) + '\n\n';
+            
+            let totalCount = 0;
+            for (let key in markedQuestions) {
+                if (markedQuestions[key] && markedQuestions[key].length > 0) {
+                    totalCount += markedQuestions[key].length;
+                }
+            }
+            output += `总标记数: ${totalCount} 道题目`;
+            
+            document.getElementById('output').textContent = output;
+        }
+        
+        // 保存到localStorage
+        function saveToStorage() {
+            try {
+                localStorage.setItem('markedQuestions_test', JSON.stringify(markedQuestions));
+                console.log('✅ 已保存到localStorage');
+            } catch (e) {
+                console.error('❌ 保存失败:', e);
+            }
+        }
+        
+        // 从localStorage加载
+        function loadFromStorage() {
+            try {
+                const saved = localStorage.getItem('markedQuestions_test');
+                if (saved) {
+                    markedQuestions = JSON.parse(saved);
+                    console.log('✅ 已从localStorage加载');
+                }
+            } catch (e) {
+                console.error('❌ 加载失败:', e);
+                markedQuestions = {};
+            }
+        }
+        
+        // 日志输出
+        function log(message) {
+            const output = document.getElementById('output');
+            output.textContent = message;
+            console.log(message);
+        }
+        
+        // 页面加载时初始化
+        window.onload = init;
+    </script>
+</body>
+</html>

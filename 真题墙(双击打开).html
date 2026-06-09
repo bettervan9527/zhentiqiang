@@ -1,0 +1,3596 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>考研数学历年真题</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', Arial, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        /* 顶部导航栏 */
+        .top-header {
+            background: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .top-controls {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .year-selector {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .toggle-btn {
+            padding: 8px 15px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .toggle-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .toggle-btn:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+        
+        /* 按钮样式增强 */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+        
+        /* 主容器 */
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+        
+        /* 左侧考点导航 */
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e8e8e8;
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: width 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .sidebar:hover {
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+        }
+        
+        /* 年份时间轴容器 */
+        .timeline-container {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e8e8e8;
+            overflow-x: auto;
+            position: relative;
+        }
+        
+        /* 年份时间轴 */
+        .timeline {
+            display: flex;
+            gap: 15px;
+            min-width: max-content;
+            padding-bottom: 10px;
+        }
+        
+        /* 年份列 */
+        .year-column {
+            flex-shrink: 0;
+            width: 80px;
+            text-align: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .year-column:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* 年份预览 */
+        .year-preview {
+            margin-top: 10px;
+            height: 500px;
+            background: #f9f9f9;
+            border: 2px solid #e8e8e8;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .year-preview:hover {
+            border-color: #1a73e8;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .year-preview.selected {
+            border-color: #1a73e8;
+            background: #e8f0fe;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2);
+        }
+        
+        /* 考点分类 */
+        .category-title {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+        
+        .category-title:hover {
+            background: #f5f7fa;
+        }
+        
+        .category-title.active {
+            background: #e8f0fe;
+            color: #1a73e8;
+        }
+        
+        .category-icon {
+            margin-right: 8px;
+            font-size: 12px;
+            transition: transform 0.2s ease;
+        }
+        
+        .category-icon.expanded {
+            transform: rotate(90deg);
+        }
+        
+        /* 考点项 */
+        .topic-item {
+            padding: 10px 20px 10px 45px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #666;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .topic-item:hover {
+            background: #f0f0f0;
+            color: #333;
+            transform: translateX(2px);
+        }
+        
+        .topic-item.active {
+            background: #e8f0fe;
+            color: #1a73e8;
+            border-left-color: #1a73e8;
+            transform: translateX(2px);
+        }
+        
+        /* 题目卡片 */
+        .paper-card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: all 0.3s ease;
+        }
+        
+        .paper-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        /* 统计图表区 */
+        .stats-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .stats-section:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        /* 模态框动画 */
+        #practiceModal {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        #practiceModal.show {
+            opacity: 1;
+        }
+        
+        #practiceModal .modal-content {
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        
+        #practiceModal.show .modal-content {
+            transform: scale(1);
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e8e8e8;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .topic-tree {
+            padding: 10px 0;
+        }
+        
+        .topic-category {
+            margin-bottom: 5px;
+        }
+        
+        .category-title {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        
+        .category-title:hover {
+            background: #f5f7fa;
+        }
+        
+        .category-title.active {
+            background: #e8f0fe;
+            color: #1a73e8;
+        }
+        
+        .category-icon {
+            margin-right: 8px;
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        
+        .category-icon.expanded {
+            transform: rotate(90deg);
+        }
+        
+        .topic-list {
+            display: none;
+            background: #fafafa;
+        }
+        
+        .topic-list .topic-category {
+            margin-left: 15px;
+        }
+        
+        .topic-list .topic-list {
+            background: #f5f5f5;
+        }
+        
+        .topic-list .topic-item {
+            padding-left: 60px;
+        }
+        
+        .topic-list.show {
+            display: block;
+        }
+        
+        .topic-list .topic-list.show {
+            display: block;
+        }
+        
+        .topic-item {
+            padding: 10px 20px 10px 45px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #666;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        
+        .topic-item:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+        
+        .topic-item.active {
+            background: #e8f0fe;
+            color: #1a73e8;
+            border-left-color: #1a73e8;
+        }
+        
+        /* 右侧内容区 */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: auto;
+        }
+        
+        /* 年份时间轴 */
+        .timeline-container {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e8e8e8;
+            overflow-x: auto;
+        }
+        
+        .timeline {
+            display: flex;
+            gap: 15px;
+            min-width: max-content;
+        }
+        
+        .year-column {
+            flex-shrink: 0;
+            width: 80px;
+            text-align: center;
+        }
+        
+        .year-header {
+            font-weight: 600;
+            font-size: 14px;
+            padding: 10px 0;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .year-header:hover {
+            color: #1a73e8;
+        }
+        
+        .year-header.active {
+            color: #1a73e8;
+            border-bottom: 3px solid #1a73e8;
+        }
+        
+        .year-preview {
+            margin-top: 10px;
+            height: 500px;
+            background: #f9f9f9;
+            border: 2px solid #e8e8e8;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .year-preview:hover {
+            border-color: #1a73e8;
+            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .year-preview.selected {
+            border-color: #1a73e8;
+            background: #e8f0fe;
+        }
+        
+        .preview-content {
+            padding: 10px;
+            font-size: 11px;
+            color: #999;
+            line-height: 1.4;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            background: #fafafa;
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .content-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #1a73e8;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1557b0;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        
+        .btn-secondary:hover {
+            background: #f5f5f5;
+        }
+        
+        /* 真题展示卡片 */
+        .paper-card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        
+        .paper-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .paper-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .paper-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .paper-preview {
+            background: #fafafa;
+            border: 1px solid #e8e8e8;
+            border-radius: 6px;
+            padding: 20px;
+            min-height: 200px;
+        }
+        
+        /* 统计图表区 */
+        .stats-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+        
+        .stats-header {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 550px;
+            overflow: hidden;
+        }
+        
+        .bar-chart {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 260px;
+            }
+            
+            .year-column {
+                width: 75px;
+            }
+            
+            .year-preview {
+                height: 450px;
+            }
+        }
+        
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+            
+            .year-column {
+                width: 70px;
+            }
+            
+            .year-preview {
+                height: 400px;
+            }
+            
+            .top-header {
+                padding: 12px 20px;
+            }
+            
+            .top-controls {
+                gap: 12px;
+            }
+            
+            .toggle-btn {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 250px;
+            }
+            
+            .timeline {
+                gap: 10px;
+            }
+            
+            .year-column {
+                width: 60px;
+            }
+            
+            .year-preview {
+                height: 300px;
+            }
+            
+            .top-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                padding: 10px 15px;
+            }
+            
+            .top-controls {
+                flex-wrap: wrap;
+                gap: 8px;
+                width: 100%;
+            }
+            
+            .year-selector {
+                flex: 1;
+                min-width: 200px;
+                font-size: 14px;
+                padding: 10px;
+            }
+            
+            .toggle-btn {
+                padding: 8px 16px;
+                font-size: 13px;
+                flex: 1;
+                min-width: 120px;
+            }
+            
+            #markCount {
+                margin: 0 8px;
+                padding: 8px 12px;
+                font-size: 13px;
+                text-align: center;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+            
+            .content-title {
+                font-size: 18px;
+                line-height: 1.3;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+                min-height: 44px;
+            }
+            
+            .action-buttons {
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            
+            /* 字体大小优化 */
+            body {
+                font-size: 16px;
+                line-height: 1.5;
+            }
+            
+            .paper-title {
+                font-size: 16px;
+            }
+            
+            .paper-meta {
+                font-size: 14px;
+                gap: 12px;
+            }
+            
+            .paper-preview p {
+                font-size: 15px;
+                line-height: 1.6;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .sidebar {
+                max-height: 200px;
+            }
+            
+            .sidebar-header {
+                padding: 15px;
+                font-size: 16px;
+                font-weight: 600;
+            }
+            
+            .category-title {
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+            
+            .topic-item {
+                padding: 10px 15px 10px 35px;
+                font-size: 13px;
+            }
+            
+            .year-column {
+                width: 55px;
+            }
+            
+            .year-header {
+                font-size: 13px;
+                padding: 10px 0;
+                font-weight: 600;
+            }
+            
+            .year-preview {
+                height: 280px;
+            }
+            
+            .top-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .year-selector {
+                width: 100%;
+                font-size: 15px;
+                padding: 12px;
+            }
+            
+            .toggle-btn {
+                width: 100%;
+                min-width: unset;
+                font-size: 14px;
+                padding: 10px;
+            }
+            
+            #markCount {
+                width: 100%;
+                text-align: center;
+                margin: 10px 0;
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            .content-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            
+            .action-buttons {
+                justify-content: center;
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                text-align: center;
+                font-size: 15px;
+                padding: 12px;
+            }
+            
+            .paper-card {
+                padding: 20px;
+                margin-bottom: 15px;
+            }
+            
+            .paper-title {
+                font-size: 16px;
+                margin-bottom: 12px;
+            }
+            
+            .paper-meta {
+                font-size: 13px;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            
+            .paper-preview {
+                padding: 15px;
+            }
+            
+            .paper-preview p {
+                font-size: 14px;
+                line-height: 1.6;
+            }
+            
+            .stats-section {
+                padding: 15px;
+            }
+            
+            .stats-header {
+                font-size: 16px;
+                margin-bottom: 15px;
+            }
+            
+            /* 触摸优化 */
+            .category-title,
+            .topic-item,
+            .year-header,
+            .year-preview {
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+            }
+            
+            /* 滚动优化 */
+            .sidebar,
+            .timeline-container,
+            .main-content {
+                scroll-behavior: smooth;
+            }
+            
+            /* 减少动画延迟，提升响应速度 */
+            * {
+                transition-duration: 0.2s;
+            }
+        }
+        
+        /* 横屏模式优化 */
+        @media (orientation: landscape) and (max-width: 768px) {
+            .main-container {
+                flex-direction: row;
+            }
+            
+            .sidebar {
+                width: 200px;
+                max-height: none;
+            }
+            
+            .year-preview {
+                height: 200px;
+            }
+            
+            .top-controls {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+            
+            .toggle-btn {
+                flex: 1;
+                min-width: 100px;
+            }
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        /* 触摸设备优化 */
+        @media (hover: none) and (pointer: coarse) {
+            /* 为触摸设备添加更大的点击区域 */
+            .toggle-btn,
+            .btn,
+            .year-header,
+            .year-preview,
+            .category-title,
+            .topic-item {
+                min-height: 44px;
+                touch-action: manipulation;
+            }
+            
+            /* 为触摸设备添加触摸反馈 */
+            .toggle-btn,
+            .btn,
+            .year-header,
+            .year-preview,
+            .category-title,
+            .topic-item {
+                -webkit-tap-highlight-color: rgba(26, 115, 232, 0.3);
+            }
+            
+            /* 为滚动元素添加触摸滚动优化 */
+            .sidebar,
+            .timeline-container,
+            .main-content,
+            .year-preview {
+                -webkit-overflow-scrolling: touch;
+            }
+        }
+        
+        /* 触摸反馈动画 */
+        .touch-feedback {
+            transition: transform 0.1s ease-in-out;
+        }
+        
+        .touch-feedback:active {
+            transform: scale(0.97);
+        }
+        
+        /* 夜间模式样式 */
+        .night-mode {
+            background-color: #121212 !important;
+            color: #e0e0e0 !important;
+        }
+        
+        .night-mode .top-header {
+            background: #1e1e1e;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .night-mode .logo {
+            color: #e0e0e0;
+        }
+        
+        .night-mode .year-selector {
+            background: #2d2d2d;
+            border-color: #444;
+            color: #e0e0e0;
+        }
+        
+        .night-mode .toggle-btn {
+            background: #2d2d2d;
+            color: #e0e0e0;
+        }
+        
+        .night-mode .toggle-btn:hover {
+            background: #3a3a3a;
+        }
+        
+        .night-mode .sidebar {
+            background: #1e1e1e;
+            border-right-color: #333;
+        }
+        
+        .night-mode .sidebar-header {
+            border-bottom-color: #333;
+            color: #e0e0e0;
+        }
+        
+        .night-mode .category-title {
+            color: #e0e0e0;
+        }
+        
+        .night-mode .category-title:hover {
+            background: #2d2d2d;
+        }
+        
+        .night-mode .category-title.active {
+            background: #1a3a6e;
+            color: #64b5f6;
+        }
+        
+        .night-mode .topic-list {
+            background: #252525;
+        }
+        
+        .night-mode .topic-list .topic-list {
+            background: #2d2d2d;
+        }
+        
+        .night-mode .topic-item {
+            color: #b0b0b0;
+        }
+        
+        .night-mode .topic-item:hover {
+            background: #333;
+            color: #e0e0e0;
+        }
+        
+        .night-mode .topic-item.active {
+            background: #1a3a6e;
+            color: #64b5f6;
+            border-left-color: #64b5f6;
+        }
+        
+        .night-mode .timeline-container {
+            background: #1e1e1e;
+            border-bottom-color: #333;
+        }
+        
+        .night-mode .year-header {
+            color: #e0e0e0;
+        }
+        
+        .night-mode .year-header:hover {
+            color: #64b5f6;
+        }
+        
+        .night-mode .year-header.active {
+            color: #64b5f6;
+            border-bottom-color: #64b5f6;
+        }
+        
+        .night-mode .year-preview {
+            background: #252525;
+            border-color: #333;
+        }
+        
+        .night-mode .year-preview:hover {
+            border-color: #64b5f6;
+            box-shadow: 0 4px 12px rgba(100, 181, 246, 0.2);
+        }
+        
+        .night-mode .year-preview.selected {
+            border-color: #64b5f6;
+            background: #1a3a6e;
+        }
+        
+        .night-mode .main-content {
+            background: #1a1a1a;
+        }
+        
+        .night-mode .content-title {
+            color: #e0e0e0;
+        }
+        
+        .night-mode .btn-primary {
+            background: #1976d2;
+        }
+        
+        .night-mode .btn-primary:hover {
+            background: #1565c0;
+        }
+        
+        .night-mode .btn-secondary {
+            background: #2d2d2d;
+            color: #e0e0e0;
+            border-color: #444;
+        }
+        
+        .night-mode .btn-secondary:hover {
+            background: #3a3a3a;
+        }
+        
+        .night-mode .paper-card {
+            background: #1e1e1e;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .night-mode .paper-title {
+            color: #e0e0e0;
+        }
+        
+        .night-mode .paper-meta {
+            color: #b0b0b0;
+        }
+        
+        .night-mode .paper-preview {
+            background: #252525;
+            border-color: #333;
+        }
+        
+        .night-mode .stats-section {
+            background: #1e1e1e;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .night-mode .stats-header {
+            color: #e0e0e0;
+        }
+        
+        .night-mode .bar {
+            background: linear-gradient(180deg, #1a73e8 0%, #0d47a1 100%);
+        }
+        
+        .night-mode .bar:hover {
+            background: linear-gradient(180deg, #0d47a1 0%, #05396b 100%);
+        }
+        
+        .night-mode .bar-value {
+            color: #e0e0e0;
+        }
+        
+        .night-mode .bar-label {
+            color: #b0b0b0;
+        }
+        
+        .night-mode .legend-item {
+            color: #b0b0b0;
+        }
+        
+        .night-mode .legend-color.high {
+            background: #1a73e8;
+        }
+        
+        .night-mode .legend-color.medium {
+            background: #388e3c;
+        }
+        
+        .night-mode .legend-color.low {
+            background: #f57c00;
+        }
+        
+        /* 夜间模式下的滚动条 */
+        .night-mode ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+        
+        .night-mode ::-webkit-scrollbar-thumb {
+            background: #444;
+        }
+        
+        .night-mode ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        /* 模态框响应式设计 */
+        @media (max-width: 768px) {
+            #practiceModal .modal-content {
+                width: 95% !important;
+                max-width: 95% !important;
+                max-height: 95vh !important;
+            }
+            
+            #practiceModal .modal-header {
+                padding: 15px !important;
+            }
+            
+            #practiceModal .modal-header h2 {
+                font-size: 16px !important;
+            }
+            
+            #practiceModal .modal-body {
+                padding: 20px !important;
+            }
+            
+            #practiceModal #questionNav {
+                gap: 8px !important;
+                padding: 15px !important;
+            }
+            
+            #practiceModal #questionNav button {
+                width: 36px !important;
+                height: 36px !important;
+                font-size: 13px !important;
+            }
+            
+            #practiceModal #questionArea {
+                padding: 20px !important;
+            }
+            
+            #practiceModal #answerInput {
+                width: 100% !important;
+                max-width: none !important;
+            }
+            
+            #practiceModal #markBtn,
+            #practiceModal #showAnalysisBtn {
+                margin-left: 0 !important;
+                margin-top: 10px !important;
+                width: 100% !important;
+            }
+            
+            #practiceModal .modal-footer {
+                padding: 15px !important;
+                flex-direction: column !important;
+                gap: 10px !important;
+                align-items: stretch !important;
+            }
+            
+            #practiceModal .modal-footer .btn {
+                width: 100% !important;
+            }
+            
+            #practiceModal .navButtons {
+                flex-direction: row !important;
+                width: 100% !important;
+            }
+            
+            #practiceModal .navButtons button {
+                flex: 1 !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #practiceModal .modal-content {
+                width: 98% !important;
+                max-width: 98% !important;
+            }
+            
+            #practiceModal .modal-body {
+                padding: 15px !important;
+            }
+            
+            #practiceModal #questionNav {
+                gap: 6px !important;
+            }
+            
+            #practiceModal #questionNav button {
+                width: 32px !important;
+                height: 32px !important;
+                font-size: 12px !important;
+            }
+            
+            #practiceModal #questionArea {
+                padding: 15px !important;
+            }
+            
+            #practiceModal #notesTextarea {
+                height: 80px !important;
+            }
+        }
+        
+        /* 夜间模式下的刷题模式 */
+        .night-mode #practiceModal {
+            background: rgba(0,0,0,0.9);
+        }
+        
+        .night-mode #practiceModal .modal-content {
+            background: #1e1e1e !important;
+            border: 1px solid #333 !important;
+        }
+        
+        .night-mode #practiceModal .modal-header {
+            background: #252525 !important;
+            border-bottom: 1px solid #333 !important;
+        }
+        
+        .night-mode #practiceModal #modalTitle {
+            color: #e0e0e0 !important;
+        }
+        
+        .night-mode #practiceModal .close-btn {
+            color: #b0b0b0 !important;
+        }
+        
+        .night-mode #practiceModal .modal-body {
+            background: #1a1a1a !important;
+        }
+        
+        .night-mode #practiceModal #questionNav {
+            background: #252525 !important;
+            border: 1px solid #333 !important;
+        }
+        
+        .night-mode #practiceModal #questionNav button {
+            background: #2d2d2d !important;
+            border: 1px solid #444 !important;
+            color: #e0e0e0 !important;
+        }
+        
+        .night-mode #practiceModal #questionNav button:hover {
+            background: #3a3a3a !important;
+            border-color: #64b5f6 !important;
+        }
+        
+        .night-mode #practiceModal #questionArea {
+            background: #252525 !important;
+            border: 1px solid #333 !important;
+        }
+        
+        .night-mode #practiceModal #questionArea h3 {
+            color: #e0e0e0 !important;
+        }
+        
+        .night-mode #practiceModal #questionArea p {
+            color: #b0b0b0 !important;
+        }
+        
+        .night-mode #practiceModal #answerInput {
+            background: #2d2d2d !important;
+            border: 1px solid #444 !important;
+            color: #e0e0e0 !important;
+        }
+        
+        .night-mode #practiceModal #answerInput::placeholder {
+            color: #777 !important;
+        }
+        
+        .night-mode #practiceModal #markBtn {
+            background: #f57c00 !important;
+        }
+        
+        .night-mode #practiceModal #markBtn:hover {
+            background: #ef6c00 !important;
+        }
+        
+        .night-mode #practiceModal #feedbackArea {
+            color: #b0b0b0 !important;
+        }
+        
+        .night-mode #practiceModal .modal-footer {
+            background: #252525 !important;
+            border-top: 1px solid #333 !important;
+        }
+        
+        .night-mode #practiceModal #timer {
+            color: #e0e0e0 !important;
+        }
+        
+        .night-mode #practiceModal .btn-secondary {
+            background: #2d2d2d !important;
+            color: #e0e0e0 !important;
+            border: 1px solid #444 !important;
+        }
+        
+        .night-mode #practiceModal .btn-secondary:hover {
+            background: #3a3a3a !important;
+        }
+        
+        .night-mode #practiceModal .btn-primary {
+            background: #1976d2 !important;
+        }
+        
+        .night-mode #practiceModal .btn-primary:hover {
+            background: #1565c0 !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div class="top-header">
+        <div class="logo">考研数学历年真题</div>
+        <div class="top-controls">
+            <select class="year-selector" id="yearRange">
+                <option value="2009-2025">2009-2025年真题集 (数学一)</option>
+                <option value="2009-2025-2">2009-2025年真题集 (数学二)</option>
+                <option value="2009-2025-3">2009-2025年真题集 (数学三)</option>
+            </select>
+            <button class="toggle-btn touch-feedback" id="showMarked">显示标记</button>
+            <button class="toggle-btn touch-feedback" onclick="exportMarkedQuestions()">导出标记</button>
+            <button class="toggle-btn touch-feedback" onclick="clearCurrentMarks()">清空标记</button>
+            <span id="markCount" style="margin: 0 15px; padding: 8px 12px; background: #e8f0fe; border-radius: 15px; font-size: 14px; color: #1a73e8; font-weight: 600;">标记: 0</span>
+            <button class="toggle-btn touch-feedback" id="showNotes">显示笔记</button>
+            <button class="toggle-btn touch-feedback" id="nightMode">夜间模式</button>
+        </div>
+    </div>
+    
+    <!-- 主容器 -->
+    <div class="main-container">
+        <!-- 左侧考点导航 -->
+        <div class="sidebar">
+            <div class="sidebar-header">考点目录</div>
+            <div class="topic-tree">
+                <!-- 高等数学 -->
+                <div class="topic-category">
+                    <div class="category-title" onclick="toggleCategory(this)">
+                        <span class="category-icon">▶</span>
+                        高等数学
+                    </div>
+                    <div class="topic-list">
+                        <div class="topic-category">
+                            <div class="category-title" onclick="toggleCategory(this)">
+                                <span class="category-icon">▶</span>
+                                函数、极限、连续
+                            </div>
+                            <div class="topic-list">
+                                <div class="topic-item" onclick="selectTopic(this, '数列极限的概念与性质')">• 数列极限的概念与性质</div>
+                                <div class="topic-item" onclick="selectTopic(this, '数列敛散性的判定')">• 数列敛散性的判定</div>
+                                <div class="topic-item" onclick="selectTopic(this, '函数极限的计算')">• 函数极限的计算</div>
+                                <div class="topic-item" onclick="selectTopic(this, '数列极限的计算')">• 数列极限的计算</div>
+                                <div class="topic-item" onclick="selectTopic(this, '无穷小量')">• 无穷小量</div>
+                                <div class="topic-item" onclick="selectTopic(this, '确定极限中的参数')">• 确定极限中的参数</div>
+                                <div class="topic-item" onclick="selectTopic(this, '函数的连续性与间断点的类型')">• 函数的连续性与间断点的类型</div>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-category">
+                            <div class="category-title" onclick="toggleCategory(this)">
+                                <span class="category-icon">▶</span>
+                                一元函数微分学
+                            </div>
+                            <div class="topic-list">
+                                <div class="topic-item" onclick="selectTopic(this, '导数与微分的概念')">• 导数与微分的概念</div>
+                                <div class="topic-item" onclick="selectTopic(this, '导数与微分的计算')">• 导数与微分的计算</div>
+                                <div class="topic-item" onclick="selectTopic(this, '导数的几何意义')">• 导数的几何意义</div>
+                                <div class="topic-item" onclick="selectTopic(this, '函数的单调性、极值与最值')">• 函数的单调性、极值与最值</div>
+                                <div class="topic-item" onclick="selectTopic(this, '曲线的凹凸性、拐点及渐近线')">• 曲线的凹凸性、拐点及渐近线</div>
+                                <div class="topic-item" onclick="selectTopic(this, '方程根的存在性与个数')">• 方程根的存在性与个数</div>
+                                <div class="topic-item" onclick="selectTopic(this, '不等式')">• 不等式</div>
+                                <div class="topic-item" onclick="selectTopic(this, '微分中值定理')">• 微分中值定理</div>
+                                <div class="topic-item" onclick="selectTopic(this, '泰勒公式')">• 泰勒公式</div>
+                                <div class="topic-item" onclick="selectTopic(this, '微分学在经济学中的应用')">• 微分学在经济学中的应用</div>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-category">
+                            <div class="category-title" onclick="toggleCategory(this)">
+                                <span class="category-icon">▶</span>
+                                一元函数积分学
+                            </div>
+                            <div class="topic-list">
+                                <div class="topic-item" onclick="selectTopic(this, '不定积分的计算')">• 不定积分的计算</div>
+                                <div class="topic-item" onclick="selectTopic(this, '定积分的概念与性质')">• 定积分的概念与性质</div>
+                                <div class="topic-item" onclick="selectTopic(this, '定积分的计算')">• 定积分的计算</div>
+                                <div class="topic-item" onclick="selectTopic(this, '变限积分')">• 变限积分</div>
+                                <div class="topic-item" onclick="selectTopic(this, '反常积分的计算')">• 反常积分的计算</div>
+                                <div class="topic-item" onclick="selectTopic(this, '定积分的应用')">• 定积分的应用</div>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-category">
+                            <div class="category-title" onclick="toggleCategory(this)">
+                                <span class="category-icon">▶</span>
+                                多元函数微积分学
+                            </div>
+                            <div class="topic-list">
+                                <div class="topic-item" onclick="selectTopic(this, '偏导数的概念与计算')">• 偏导数的概念与计算</div>
+                                <div class="topic-item" onclick="selectTopic(this, '全微分的概念与计算')">• 全微分的概念与计算</div>
+                                <div class="topic-item" onclick="selectTopic(this, '多元函数微分学的几何应用')">• 多元函数微分学的几何应用</div>
+                                <div class="topic-item" onclick="selectTopic(this, '二重积分的概念与性质')">• 二重积分的概念与性质</div>
+                                <div class="topic-item" onclick="selectTopic(this, '交换积分次序与坐标系之间的转化')">• 交换积分次序与坐标系之间的转化</div>
+                                <div class="topic-item" onclick="selectTopic(this, '二重积分的计算')">• 二重积分的计算</div>
+                                <div class="topic-item" onclick="selectTopic(this, '二重积分的综合与应用')">• 二重积分的综合与应用</div>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-category">
+                            <div class="category-title" onclick="toggleCategory(this)">
+                                <span class="category-icon">▶</span>
+                                无穷级数
+                            </div>
+                            <div class="topic-list">
+                                <div class="topic-item" onclick="selectTopic(this, '数项级数')">• 数项级数</div>
+                                <div class="topic-item" onclick="selectTopic(this, '幂级数')">• 幂级数</div>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-category">
+                            <div class="category-title" onclick="toggleCategory(this)">
+                                <span class="category-icon">▶</span>
+                                常微分方程与差分方程
+                            </div>
+                            <div class="topic-list">
+                                <div class="topic-item" onclick="selectTopic(this, '线性微分方程的解的结构')">• 线性微分方程的解的结构</div>
+                                <div class="topic-item" onclick="selectTopic(this, '一阶非齐次线性微分方程')">• 一阶非齐次线性微分方程</div>
+                                <div class="topic-item" onclick="selectTopic(this, '常系数齐次线性微分方程')">• 常系数齐次线性微分方程</div>
+                                <div class="topic-item" onclick="selectTopic(this, '二阶常系数非齐次线性微分方程')">• 二阶常系数非齐次线性微分方程</div>
+                                <div class="topic-item" onclick="selectTopic(this, '微分方程的应用')">• 微分方程的应用</div>
+                                <div class="topic-item" onclick="selectTopic(this, '差分方程')">• 差分方程</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 线性代数 -->
+                <div class="topic-category">
+                    <div class="category-title" onclick="toggleCategory(this)">
+                        <span class="category-icon">▶</span>
+                        线性代数
+                    </div>
+                    <div class="topic-list">
+                        <div class="topic-item" onclick="selectTopic(this, '行列式')">行列式</div>
+                        <div class="topic-item" onclick="selectTopic(this, '矩阵')">矩阵</div>
+                        <div class="topic-item" onclick="selectTopic(this, '向量')">向量</div>
+                        <div class="topic-item" onclick="selectTopic(this, '线性方程组')">线性方程组</div>
+                        <div class="topic-item" onclick="selectTopic(this, '矩阵的特征值和特征向量')">矩阵的特征值和特征向量</div>
+                        <div class="topic-item" onclick="selectTopic(this, '二次型')">二次型</div>
+                    </div>
+                </div>
+                
+                <!-- 概率论与数理统计 -->
+                <div class="topic-category" id="probabilityCategory">
+                    <div class="category-title" onclick="toggleCategory(this)">
+                        <span class="category-icon">▶</span>
+                        概率论与数理统计
+                    </div>
+                    <div class="topic-list">
+                        <div class="topic-item" onclick="selectTopic(this, '随机事件和概率')">随机事件和概率</div>
+                        <div class="topic-item" onclick="selectTopic(this, '随机变量及其分布')">随机变量及其分布</div>
+                        <div class="topic-item" onclick="selectTopic(this, '多维随机变量及其分布')">多维随机变量及其分布</div>
+                        <div class="topic-item" onclick="selectTopic(this, '随机变量的数字特征')">随机变量的数字特征</div>
+                        <div class="topic-item" onclick="selectTopic(this, '大数定律和中心极限定理')">大数定律和中心极限定理</div>
+                        <div class="topic-item" onclick="selectTopic(this, '数理统计的基本概念')">数理统计的基本概念</div>
+                        <div class="topic-item" onclick="selectTopic(this, '参数估计')">参数估计</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 右侧内容区 -->
+        <div class="content-area">
+            <!-- 年份时间轴 -->
+            <div class="timeline-container">
+                <div class="timeline" id="timeline">
+                    <!-- 年份列将通过JavaScript生成 -->
+                </div>
+            </div>
+            
+            <!-- 主内容区 -->
+            <div class="main-content">
+                <div class="content-header">
+                    <div class="content-title" id="contentTitle">2018年数学一真题</div>
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary touch-feedback" onclick="window.open(paperImages[currentMathType][selectedYear.toString()], '_blank')">查看题目图片</button>
+                        <button class="btn btn-secondary touch-feedback" onclick="viewPDF()">查看PDF</button>
+                        <button class="btn btn-primary touch-feedback" id="startPractice">开始刷题</button>
+                    </div>
+                </div>
+                
+                <!-- 真题展示卡片 -->
+                <div class="paper-card">
+                    <div class="paper-info">
+                        <div class="paper-title">答题规范</div>
+                        <div class="paper-meta">
+                            <span>📄 完整试卷</span>
+                            <span>⏱️ 180分钟</span>
+                            <span>💯 150分</span>
+                        </div>
+                    </div>
+                    <div class="paper-preview">
+                        <p style="color: #666; line-height: 1.8;">
+                            一、选择题：1~8小题，每小题4分，共32分。下列每题给出的四个选项中，只有一个选项是符合题目要求的。<br><br>
+                            二、填空题：9~14小题，每小题4分，共24分。<br><br>
+                            三、解答题：15~23小题，共94分。解答应写出文字说明、证明过程或演算步骤。<br><br>
+                            <span style="color: #999;">点击"开始刷题"查看完整试题内容...</span>
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- 统计图表区 -->
+                <div class="stats-section">
+                    <div class="stats-header" id="statsHeader">你还没开始刷题，则完每道题记得点击表情记录 ~</div>
+                    <div class="chart-container">
+                        <div class="bar-chart" id="barChart">
+                            <!-- 柱状图将通过JavaScript生成 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 年份数据
+        const years = [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009];
+        
+        // 题目图片映射 - group8-10对应数学一到数学三，按2025-2009顺序
+        const paperImages = {
+            "数学一": {
+                "2025": "题目图片/group_8_1/paper_42",
+                "2024": "题目图片/group_8_1/paper_43",
+                "2023": "题目图片/group_8_1/paper_44",
+                "2022": "题目图片/group_8_1/paper_45",
+                "2021": "题目图片/group_8_1/paper_46",
+                "2020": "题目图片/group_8_1/paper_47",
+                "2019": "题目图片/group_8_1/paper_48",
+                "2018": "题目图片/group_8_1/paper_49",
+                "2017": "题目图片/group_8_1/paper_50",
+                "2016": "题目图片/group_8_1/paper_51",
+                "2015": "题目图片/group_8_1/paper_78",
+                "2014": "题目图片/group_8_1/paper_79",
+                "2013": "题目图片/group_8_1/paper_80",
+                "2012": "题目图片/group_8_1/paper_81",
+                "2011": "题目图片/group_8_1/paper_82",
+                "2010": "题目图片/group_8_1/paper_83",
+                "2009": "题目图片/group_8_1/paper_84"
+            },
+            "数学二": {
+                "2025": "题目图片/group_9_2/paper_54",
+                "2024": "题目图片/group_9_2/paper_55",
+                "2023": "题目图片/group_9_2/paper_56",
+                "2022": "题目图片/group_9_2/paper_57",
+                "2021": "题目图片/group_9_2/paper_58",
+                "2020": "题目图片/group_9_2/paper_59",
+                "2019": "题目图片/group_9_2/paper_60",
+                "2018": "题目图片/group_9_2/paper_61",
+                "2017": "题目图片/group_9_2/paper_62",
+                "2016": "题目图片/group_9_2/paper_63",
+                "2015": "题目图片/group_9_2/paper_85",
+                "2014": "题目图片/group_9_2/paper_86",
+                "2013": "题目图片/group_9_2/paper_87",
+                "2012": "题目图片/group_9_2/paper_88",
+                "2011": "题目图片/group_9_2/paper_89",
+                "2010": "题目图片/group_9_2/paper_90",
+                "2009": "题目图片/group_9_2/paper_91"
+            },
+            "数学三": {
+                "2025": "题目图片/group_10_3/paper_66",
+                "2024": "题目图片/group_10_3/paper_67",
+                "2023": "题目图片/group_10_3/paper_68",
+                "2022": "题目图片/group_10_3/paper_69",
+                "2021": "题目图片/group_10_3/paper_70",
+                "2020": "题目图片/group_10_3/paper_71",
+                "2019": "题目图片/group_10_3/paper_72",
+                "2018": "题目图片/group_10_3/paper_73",
+                "2017": "题目图片/group_10_3/paper_74",
+                "2016": "题目图片/group_10_3/paper_75",
+                "2015": "题目图片/group_10_3/paper_92",
+                "2014": "题目图片/group_10_3/paper_93",
+                "2013": "题目图片/group_10_3/paper_94",
+                "2012": "题目图片/group_10_3/paper_95",
+                "2011": "题目图片/group_10_3/paper_96",
+                "2010": "题目图片/group_10_3/paper_97",
+                "2009": "题目图片/group_10_3/paper_98"
+            }
+        };
+        
+        // 答案和解析映射 - 对应分类后的答案图片
+        const answerImages = {
+            "数学一": {
+                "2025": "sorted_images/数学一/2025年",
+                "2024": "sorted_images/数学一/2024年",
+                "2023": "sorted_images/数学一/2023年",
+                "2022": "sorted_images/数学一/2022年",
+                "2021": "sorted_images/数学一/2021年",
+                "2020": "sorted_images/数学一/2020年",
+                "2019": "sorted_images/数学一/2019年",
+                "2018": "sorted_images/数学一/2018年",
+                "2017": "sorted_images/数学一/2017年",
+                "2016": "sorted_images/数学一/2016年",
+                "2015": "sorted_images/数学一/2015年",
+                "2014": "sorted_images/数学一/2014年",
+                "2013": "sorted_images/数学一/2013年",
+                "2012": "sorted_images/数学一/2012年",
+                "2011": "sorted_images/数学一/2011年",
+                "2010": "sorted_images/数学一/2010年",
+                "2009": "sorted_images/数学一/2009年"
+            },
+            "数学二": {
+                "2025": "sorted_images/数学二/2025年",
+                "2024": "sorted_images/数学二/2024年",
+                "2023": "sorted_images/数学二/2023年",
+                "2022": "sorted_images/数学二/2022年",
+                "2021": "sorted_images/数学二/2021年",
+                "2020": "sorted_images/数学二/2020年",
+                "2019": "sorted_images/数学二/2019年",
+                "2018": "sorted_images/数学二/2018年",
+                "2017": "sorted_images/数学二/2017年",
+                "2016": "sorted_images/数学二/2016年",
+                "2015": "sorted_images/数学二/2015年",
+                "2014": "sorted_images/数学二/2014年",
+                "2013": "sorted_images/数学二/2013年",
+                "2012": "sorted_images/数学二/2012年",
+                "2011": "sorted_images/数学二/2011年",
+                "2010": "sorted_images/数学二/2010年",
+                "2009": "sorted_images/数学二/2009年"
+            },
+            "数学三": {
+                "2025": "sorted_images/数学三/2025年",
+                "2024": "sorted_images/数学三/2024年",
+                "2023": "sorted_images/数学三/2023年",
+                "2022": "sorted_images/数学三/2022年",
+                "2021": "sorted_images/数学三/2021年",
+                "2020": "sorted_images/数学三/2020年",
+                "2019": "sorted_images/数学三/2019年",
+                "2018": "sorted_images/数学三/2018年",
+                "2017": "sorted_images/数学三/2017年",
+                "2016": "sorted_images/数学三/2016年",
+                "2015": "sorted_images/数学三/2015年",
+                "2014": "sorted_images/数学三/2014年",
+                "2013": "sorted_images/数学三/2013年",
+                "2012": "sorted_images/数学三/2012年",
+                "2011": "sorted_images/数学三/2011年",
+                "2010": "sorted_images/数学三/2010年",
+                "2009": "sorted_images/数学三/2009年"
+            }
+        };
+        
+        let selectedTopic = "函数极限的计算";
+        
+        // 初始化时间轴
+        function initTimeline() {
+            const timeline = document.getElementById('timeline');
+            timeline.innerHTML = '';
+            
+            years.forEach(year => {
+                const column = document.createElement('div');
+                column.className = 'year-column';
+                
+                const header = document.createElement('div');
+                header.className = 'year-header' + (year === selectedYear ? ' active' : '');
+                header.textContent = year;
+                header.onclick = () => selectYear(year);
+                
+                const preview = document.createElement('div');
+                preview.className = 'year-preview' + (year === selectedYear ? ' selected' : '');
+                preview.onclick = () => selectYear(year);
+                
+                const content = document.createElement('div');
+                content.className = 'preview-content';
+                
+                // 获取对应年份的图片路径
+                const imagePath = paperImages[currentMathType][year.toString()];
+                if (imagePath) {
+                    // 生成纵向排列的图片，确保填满年份框
+                    let imageHTML = '<div style="width: 100%; height: 100%; overflow-y: auto; padding: 0; display: flex; flex-direction: column; background-color: #ffffff;">';
+                    // 根据年份确定显示的图片数量
+                    const maxImages = (year >= 2021 && year <= 2025) ? 22 : 23;
+                    for (let i = 1; i <= maxImages; i++) {
+                        const imageFile = i.toString().padStart(2, '0') + '.png';
+                        const imageFileAlt = i.toString() + '.png';
+                        const marginBottom = i < maxImages ? 'margin-bottom: 8px;' : '';
+                        // 添加图片加载错误处理，确保即使某些图片不存在也不会影响整体显示
+                        imageHTML += `<div style="position: relative; width: 100%; ${marginBottom}">
+                            <img src="./${imagePath}/${imageFile}" alt="${year}年${currentMathType}真题第${i}页" style="width: 100%; height: auto; border-radius: 0;" onError="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <img src="./${imagePath}/${imageFileAlt}" alt="${year}年${currentMathType}真题第${i}页" style="width: 100%; height: auto; border-radius: 0; display: none;" onError="this.style.display='none';">
+                        </div>`;
+                    }
+                    imageHTML += '</div>';
+                    content.innerHTML = imageHTML;
+                } else {
+                    // 显示数学一的默认内容
+                    content.innerHTML = `
+                        <div style="width: 100%; height: 100%; overflow-y: auto; padding: 5px; font-size: 10px; line-height: 1.4; color: #333;">
+                            <div style="padding: 2px 0; border-bottom: 1px solid #f0f0f0;">1. 选择题</div>
+                            <div style="padding: 2px 0; border-bottom: 1px solid #f0f0f0;">2. 选择题</div>
+                            <div style="padding: 2px 0; border-bottom: 1px solid #f0f0f0;">3. 选择题</div>
+                            <div style="padding: 2px 0; border-bottom: 1px solid #f0f0f0;">4. 选择题</div>
+                            <div style="padding: 2px 0; border-bottom: 1px solid #f0f0f0;">5. 选择题</div>
+                            <div style="padding: 2px 0; border-bottom: 1px solid #f0f0f0;">6. 选择题</div>
+                            <div style="padding: 2px 0; border-bottom: 1px solid #f0f0f0;">7. 选择题</div>
+                            <div style="padding: 2px 0; border-bottom: 1px solid #f0f0f0;">8. 选择题</div>
+                            <div style="padding: 2px 0; border-bottom: 1px solid #f0f0f0;">9. 填空题</div>
+                            <div style="padding: 2px 0; border-bottom: 1px solid #f0f0f0;">10. 填空题</div>
+                        </div>
+                    `;
+                }
+                
+                preview.appendChild(content);
+                column.appendChild(header);
+                column.appendChild(preview);
+                timeline.appendChild(column);
+            });
+        }
+        
+        // 选择年份
+        function selectYear(year) {
+            selectedYear = year;
+            currentQuestion = 1; // 重置为第一题
+            initTimeline();
+            updateContent();
+            updateMarkCount();
+        }
+        
+        // 更新内容区
+        function updateContent() {
+            document.getElementById('contentTitle').textContent = `${selectedYear}年${currentMathType}真题`;
+            
+            // 更新题目内容区域
+            const paperPreview = document.querySelector('.paper-preview');
+            if (paperPreview) {
+                // 检查是否存在对应的图片路径
+                const imagePath = paperImages[currentMathType][selectedYear.toString()];
+                if (imagePath) {
+                    paperPreview.innerHTML = `
+                        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 15px;">${selectedYear}年全国硕士研究生招生考试${currentMathType}试题</h3>
+                        <p style="color: #666; line-height: 1.8;">
+                            ${selectedYear >= 2021 && selectedYear <= 2025 ? 
+                                `一、选择题：1~10小题，每小题5分，共50分。下列每题给出的四个选项中，只有一个选项是符合题目要求的。<br><br>
+                                二、填空题：11~16小题，每小题5分，共30分。<br><br>
+                                三、解答题：17~22小题，共70分。解答应写出文字说明、证明过程或演算步骤。<br><br>` : 
+                                `一、选择题：1~8小题，每小题4分，共32分。下列每题给出的四个选项中，只有一个选项是符合题目要求的。<br><br>
+                                二、填空题：9~14小题，每小题4分，共24分。<br><br>
+                                三、解答题：15~23小题，共94分。解答应写出文字说明、证明过程或演算步骤。<br><br>`
+                            }
+                            <span style="color: #999;">点击"开始刷题"进入刷题模式...</span>
+                        </p>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 5px; margin-top: 20px;">
+                            ${Array.from({length: (selectedYear >= 2021 && selectedYear <= 2025) ? 22 : 23}, (_, i) => {
+                                const questionNumber = i + 1;
+                                const imageFile = questionNumber.toString().padStart(2, '0') + '.png';
+                                const imageFileAlt = questionNumber.toString() + '.png';
+                                return `<div style="position: relative; max-width: 100%;">
+                                    <img src="./${imagePath}/${imageFile}" alt="${selectedYear}年${currentMathType}真题第${questionNumber}页" style="max-width: 100%; height: auto; border-radius: 4px;" onError="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <img src="./${imagePath}/${imageFileAlt}" alt="${selectedYear}年${currentMathType}真题第${questionNumber}页" style="max-width: 100%; height: auto; border-radius: 4px; display: none;" onError="this.style.display='none';">
+                                </div>`;
+                            }).join('')}
+                        </div>
+                    `;
+                } else {
+                    paperPreview.innerHTML = `
+                        <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 15px;">${selectedYear}年全国硕士研究生招生考试${currentMathType}试题</h3>
+                        <p style="color: #666; line-height: 1.8;">
+                            一、选择题：1~8小题，每小题4分，共32分。下列每题给出的四个选项中，只有一个选项是符合题目要求的。<br><br>
+                            二、填空题：9~14小题，每小题4分，共24分。<br><br>
+                            三、解答题：15~23小题，共94分。解答应写出文字说明、证明过程或演算步骤。<br><br>
+                            <div style="background: #fff3cd; padding: 15px; border-radius: 6px; margin: 20px 0;">
+                                <h4 style="margin-top: 0; color: #856404;">⚠️ 提示</h4>
+                                <p>未找到对应年份的题目图片，显示默认题目结构。</p>
+                            </div>
+                            <span style="color: #999;">点击"开始刷题"查看完整试题内容...</span>
+                        </p>
+                    `;
+                }
+            }
+            
+            // 更新年份选择器
+            const yearRange = document.getElementById('yearRange');
+            if (yearRange) {
+                if (currentMathType === "数学二") {
+                    yearRange.value = "2009-2025-2";
+                } else if (currentMathType === "数学三") {
+                    yearRange.value = "2009-2025-3";
+                } else {
+                    yearRange.value = "2009-2025";
+                }
+            }
+        }
+        
+        // 切换考点分类
+        function toggleCategory(element) {
+            const icon = element.querySelector('.category-icon');
+            const list = element.nextElementSibling;
+            
+            if (list.classList.contains('show')) {
+                list.classList.remove('show');
+                icon.classList.remove('expanded');
+            } else {
+                list.classList.add('show');
+                icon.classList.add('expanded');
+            }
+        }
+        
+        // 选择考点
+        function selectTopic(element, topic) {
+            // 移除所有active类
+            document.querySelectorAll('.topic-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // 添加当前active类
+            element.classList.add('active');
+            selectedTopic = topic;
+            
+            // 更新统计图表
+            updateChart();
+        }
+        
+        // 考点考频数据（参考样式）
+        const topicFrequencyData = {
+            "函数、极限、连续": 5.1,
+            "一元函数微分学": 10.4,
+            "一元函数积分学": 6.7,
+            "多元函数微分学": 8.7,
+            "多元函数积分学": 12.9,
+            "无穷级数": 6.0,
+            "常微分方程": 5.8,
+            "行列式": 0.8,
+            "矩阵": 2.5,
+            "向量": 3.6,
+            "线性方程组": 4.3,
+            "矩阵的特征值和特征向量": 5.2,
+            "二次型": 5.8,
+            "随机事件和概率": 1.7,
+            "随机变量及其分布": 2.2,
+            "多维随机变量及其分布": 3.7,
+            "随机变量的数字特征": 6.3,
+            "大数定律和中心极限定理": 0.0,
+            "数理统计的基本概念": 0.5,
+            "参数估计与假设检验": 1.1
+        };
+
+        // 初始化统计图表
+        function initChart() {
+            
+            const barChart = document.getElementById('barChart');
+            barChart.innerHTML = '';
+            
+            // 转换数据为数组并排序（按原始顺序）
+            const chartData = Object.entries(topicFrequencyData)
+                .map(([name, value]) => ({ name, value, label: value + '%' }));
+            
+            const maxValue = Math.max(...chartData.map(d => d.value));
+            
+            // 创建图表容器
+            const chartContainer = document.createElement('div');
+            chartContainer.style.cssText = `
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                padding: 20px;
+                overflow: hidden;
+                position: relative;
+                width: 100%;
+                height: 100%;
+            `;
+            
+            // 创建网格线背景
+            const gridBackground = document.createElement('div');
+            gridBackground.style.cssText = `
+                position: absolute;
+                left: 10px;
+                top: 10px;
+                right: 10px;
+                bottom: 80px;
+                background-image: linear-gradient(to bottom, #e8e8e8 1px, transparent 1px);
+                background-size: 100% 20%;
+                z-index: 1;
+            `;
+            
+            // 创建柱状图容器
+            const barsContainer = document.createElement('div');
+            barsContainer.style.cssText = `
+                display: flex;
+                align-items: flex-end;
+                justify-content: center;
+                gap: 2px;
+                padding: 20px 10px 30px 10px;
+                position: relative;
+                z-index: 2;
+                min-height: 380px;
+                flex-wrap: nowrap;
+                overflow: hidden;
+                width: 100%;
+            `;
+            
+            // 隐藏滚动条
+            barsContainer.addEventListener('wheel', function(e) {
+                if (e.deltaY === 0) {
+                    e.preventDefault();
+                    this.scrollLeft += e.deltaX;
+                }
+            });
+            
+            // 为WebKit浏览器隐藏滚动条
+            barsContainer.style['-webkit-scrollbar'] = 'none';
+            
+            // 创建数据列
+            chartData.forEach(data => {
+                const barColumn = document.createElement('div');
+                barColumn.style.cssText = `
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 5px;
+                    flex: 1;
+                    min-width: 60px;
+                `;
+                
+                // 柱状图
+                const bar = document.createElement('div');
+                bar.style.cssText = `
+                    width: 24px;
+                    background: linear-gradient(180deg, #1a73e8 0%, #0d47a1 100%);
+                    border-radius: 4px 4px 0 0;
+                    position: relative;
+                    min-height: 10px;
+                    transition: all 0.3s;
+                    cursor: pointer;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                `;
+                
+                // 计算柱状图高度（基于adjustedMaxYValue）
+                const maxYValue = Math.ceil(maxValue * 1.2);
+                let yStep;
+                if (maxYValue <= 10) {
+                    yStep = 2;
+                } else if (maxYValue <= 15) {
+                    yStep = 3;
+                } else {
+                    yStep = 5;
+                }
+                const adjustedMaxYValue = Math.ceil(maxYValue / yStep) * yStep;
+                const barHeight = (data.value / adjustedMaxYValue) * 360;
+                bar.style.height = barHeight + 'px';
+                
+                // 数值标签
+                const barValue = document.createElement('div');
+                barValue.style.cssText = `
+                    position: absolute;
+                    top: -30px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    font-size: 11px;
+                    font-weight: 600;
+                    color: #333;
+                    white-space: nowrap;
+                    background: rgba(255, 255, 255, 0.95);
+                    padding: 3px 6px;
+                    border-radius: 4px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    z-index: 5;
+                    transition: all 0.3s;
+                `;
+                barValue.textContent = data.label;
+                
+                // 考点名称
+                const topicName = document.createElement('div');
+                topicName.style.cssText = `
+                    font-size: 7px;
+                    color: #666;
+                    text-align: center;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-width: 80px;
+                    margin-top: 15px;
+                    transform: rotate(-45deg);
+                    transform-origin: center;
+                    transition: all 0.3s;
+                    line-height: 1.2;
+                    padding: 0 2px;
+                    font-weight: 500;
+                `;
+                topicName.textContent = data.name;
+                
+                // 添加悬停效果
+                bar.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scaleY(1.05)';
+                    this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+                    this.style.background = 'linear-gradient(180deg, #1976d2 0%, #0d47a1 100%)';
+                });
+                
+                bar.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scaleY(1)';
+                    this.style.boxShadow = 'none';
+                    this.style.background = 'linear-gradient(180deg, #1a73e8 0%, #0d47a1 100%)';
+                });
+                
+                // 添加点击事件，显示详细信息
+                bar.addEventListener('click', function() {
+                    showTopicDetails(data);
+                });
+                
+                bar.appendChild(barValue);
+                barColumn.appendChild(bar);
+                barColumn.appendChild(topicName);
+                barsContainer.appendChild(barColumn);
+            });
+            
+            // 添加提示框
+            const tooltip = document.createElement('div');
+            tooltip.style.cssText = `
+                position: absolute;
+                background: rgba(255, 255, 255, 0.95);
+                border: 1px solid #e8e8e8;
+                border-radius: 6px;
+                padding: 10px;
+                font-size: 12px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                z-index: 10;
+                display: none;
+                pointer-events: none;
+                white-space: nowrap;
+            `;
+            
+            // 计算总分
+            const totalScore = chartData.reduce((sum, item) => sum + item.value, 0).toFixed(1);
+            
+            // 添加状态指示器
+            const statusIndicators = document.createElement('div');
+            statusIndicators.style.cssText = `
+                position: absolute;
+                top: 10px;
+                right: 200px;
+                display: flex;
+                gap: 15px;
+                font-size: 12px;
+                z-index: 3;
+            `;
+            
+            statusIndicators.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <div style="width: 12px; height: 12px; background: #4caf50; border-radius: 50%;"></div>
+                    <span>熟练题</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <div style="width: 12px; height: 12px; background: #ffeb3b; border-radius: 50%;"></div>
+                    <span>不熟练</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <div style="width: 12px; height: 12px; background: #f44336; border-radius: 50%;"></div>
+                    <span>错题</span>
+                </div>
+            `;
+            
+            chartContainer.appendChild(gridBackground);
+            chartContainer.appendChild(statusIndicators);
+            chartContainer.appendChild(tooltip);
+            chartContainer.appendChild(barsContainer);
+            barChart.appendChild(chartContainer);
+            
+            // 为每个柱状图添加鼠标悬停事件
+            chartData.forEach((data, index) => {
+                const bar = barsContainer.children[index].querySelector('div:first-child');
+                if (bar) {
+                    bar.addEventListener('mouseenter', function(e) {
+                        // 更新tooltip内容
+                        tooltip.innerHTML = `
+                            <div style="font-weight: 600; margin-bottom: 5px;">${data.name}</div>
+                            <div style="font-size: 11px; color: #666;">${data.value}%</div>
+                            <div style="margin-top: 5px; padding-top: 5px; border-top: 1px solid #e8e8e8;">
+                                <div style="font-size: 11px; color: #666;">总分值</div>
+                                <div style="font-weight: 600;">${(data.value * 150 / 100).toFixed(1)}分</div>
+                            </div>
+                        `;
+                        
+                        // 显示tooltip并设置位置
+                        tooltip.style.display = 'block';
+                        tooltip.style.left = (e.pageX + 10) + 'px';
+                        tooltip.style.top = (e.pageY + 10) + 'px';
+                    });
+                    
+                    bar.addEventListener('mousemove', function(e) {
+                        // 更新tooltip位置
+                        tooltip.style.left = (e.pageX + 10) + 'px';
+                        tooltip.style.top = (e.pageY + 10) + 'px';
+                    });
+                    
+                    bar.addEventListener('mouseleave', function() {
+                        // 隐藏tooltip
+                        tooltip.style.display = 'none';
+                    });
+                }
+            });
+        }
+        
+        // 显示考点详细信息
+        function showTopicDetails(data) {
+            // 创建详情模态框
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+            `;
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white;
+                border-radius: 8px;
+                padding: 25px;
+                width: 90%;
+                max-width: 500px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            `;
+            
+            modalContent.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-size: 18px; font-weight: 600; color: #333;">${data.name} 详细信息</h3>
+                    <button onclick="this.parentElement.parentElement.parentElement.remove()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #999;">&times;</button>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span style="color: #666;">考频占比:</span>
+                        <span style="font-weight: 600; color: #1a73e8;">${data.value}%</span>
+                    </div>
+                    <div style="width: 100%; height: 10px; background: #f0f0f0; border-radius: 5px; overflow: hidden;">
+                        <div style="width: ${data.value}%; height: 100%; background: linear-gradient(90deg, #1a73e8 0%, #0d47a1 100%); border-radius: 5px;"></div>
+                    </div>
+                </div>
+                <div style="background: #f5f7fa; padding: 15px; border-radius: 6px;">
+                    <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 10px; color: #333;">考点分析</h4>
+                    <p style="font-size: 13px; line-height: 1.5; color: #666;">
+                        该考点在历年真题中出现的频率为 <strong>${data.value}%</strong>，
+                        ${data.value > 8 ? '属于高频考点，建议重点掌握。' : data.value > 4 ? '属于中频考点，需要认真复习。' : '属于低频考点，了解基本概念即可。'}
+                    </p>
+                </div>
+                <div style="margin-top: 20px; text-align: right;">
+                    <button onclick="this.parentElement.parentElement.parentElement.remove()" style="padding: 8px 20px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">关闭</button>
+                </div>
+            `;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+        }
+        
+        // 更新图表
+        function updateChart() {
+            // 这里可以根据选择的考点更新图表数据
+            initChart();
+        }
+        
+        // 根据数学类型显示或隐藏概率论目录
+        function updateProbabilityCategory() {
+            const probabilityCategory = document.getElementById('probabilityCategory');
+            if (probabilityCategory) {
+                if (currentMathType === "数学二") {
+                    probabilityCategory.style.display = 'none';
+                } else {
+                    probabilityCategory.style.display = 'block';
+                }
+            }
+        }
+        
+        // 数学类型切换
+        document.addEventListener('DOMContentLoaded', function() {
+            const yearRangeElement = document.getElementById('yearRange');
+            if (yearRangeElement) {
+                yearRangeElement.addEventListener('change', function(e) {
+                    const value = e.target.value;
+                    if (value === '2009-2025-2') {
+                        currentMathType = "数学二";
+                    } else if (value === '2009-2025-3') {
+                        currentMathType = "数学三";
+                    } else {
+                        currentMathType = "数学一";
+                    }
+                    // 强制更新UI
+                    initTimeline();
+                    updateContent();
+                    updateProbabilityCategory();
+                    updateMarkCount();
+                    // 确保年份选择器显示正确的值
+                    if (currentMathType === "数学二") {
+                        yearRangeElement.value = "2009-2025-2";
+                    } else if (currentMathType === "数学三") {
+                        yearRangeElement.value = "2009-2025-3";
+                    } else {
+                        yearRangeElement.value = "2009-2025";
+                    }
+                });
+            }
+        });
+        
+        // 夜间模式切换
+        function initNightMode() {
+            const nightModeBtn = document.getElementById('nightMode');
+            const isNightMode = localStorage.getItem('nightMode') === 'true';
+            
+            // 应用夜间模式
+            function applyNightMode(enabled) {
+                if (enabled) {
+                    document.body.classList.add('night-mode');
+                    nightModeBtn.textContent = '日间模式';
+                } else {
+                    document.body.classList.remove('night-mode');
+                    nightModeBtn.textContent = '夜间模式';
+                }
+                localStorage.setItem('nightMode', enabled);
+            }
+            
+            // 初始化夜间模式状态
+            applyNightMode(isNightMode);
+            
+            // 绑定点击事件
+            nightModeBtn.addEventListener('click', function() {
+                const currentMode = document.body.classList.contains('night-mode');
+                applyNightMode(!currentMode);
+            });
+        }
+        
+
+        
+        // 存储答题状态
+        let answers = {};
+        let markedQuestions = {};
+        let notes = {};
+        let currentQuestion = 1;
+        let currentMathType = "数学一";
+        let selectedYear = 2025;
+        
+        // 从localStorage加载数据
+        function loadFromStorage() {
+            console.log('🔄 开始加载localStorage数据...');
+            
+            const savedAnswers = localStorage.getItem('answers_visual');
+            if (savedAnswers) {
+                try {
+                    answers = JSON.parse(savedAnswers);
+                    console.log('✅ 已加载答案记录:', Object.keys(answers).length, '条');
+                } catch (e) {
+                    console.error('❌ 加载答案记录失败:', e);
+                    answers = {};
+                }
+            }
+            
+            const savedMarked = localStorage.getItem('markedQuestions_visual');
+            if (savedMarked) {
+                try {
+                    markedQuestions = JSON.parse(savedMarked);
+                    // 确保markedQuestions是对象格式
+                    if (Array.isArray(markedQuestions)) {
+                        console.warn('⚠️ 标记数据格式不正确，已重置为空对象');
+                        markedQuestions = {};
+                    }
+                    console.log('✅ 已加载标记记录:');
+                    console.log('📋 标记的题目:', markedQuestions);
+                } catch (e) {
+                    console.error('❌ 加载标记记录失败:', e);
+                    markedQuestions = {};
+                }
+            } else {
+                // 如果没有存储的标记数据，初始化为空对象
+                markedQuestions = {};
+            }
+            
+            const savedNotes = localStorage.getItem('notes_visual');
+            if (savedNotes) {
+                try {
+                    notes = JSON.parse(savedNotes);
+                    console.log('✅ 已加载笔记记录:', Object.keys(notes).length, '条');
+                } catch (e) {
+                    console.error('❌ 加载笔记记录失败:', e);
+                    notes = {};
+                }
+            }
+            
+            console.log('✅ localStorage数据加载完成');
+        }
+        
+        // 保存到localStorage
+        function saveToStorage() {
+            try {
+                localStorage.setItem('answers_visual', JSON.stringify(answers));
+                localStorage.setItem('markedQuestions_visual', JSON.stringify(markedQuestions));
+                localStorage.setItem('notes_visual', JSON.stringify(notes));
+                console.log('💾 数据已保存到localStorage');
+            } catch (e) {
+                console.error('❌ 保存数据失败:', e);
+            }
+        }
+        
+        // 更新标记题目数量显示
+        function updateMarkCount() {
+            const key = `${currentMathType}_${selectedYear}`;
+            const markedList = markedQuestions[key] ? markedQuestions[key] : [];
+            const count = markedList.length;
+            
+            const markCountElement = document.getElementById('markCount');
+            if (markCountElement) {
+                markCountElement.textContent = `标记: ${count}`;
+            }
+        }
+        
+        // 导出标记题目
+        function exportMarkedQuestions() {
+            // 加载最新的标记数据
+            loadFromStorage();
+            
+            console.log('🔄 导出标记题目，当前标记数据:', markedQuestions);
+            
+            let totalMarked = 0;
+            let exportData = '考研数学历年真题 - 标记题目导出\n';
+            exportData += '='.repeat(60) + '\n\n';
+            
+            // 按数学类型分组统计
+            const mathTypeStats = {};
+            
+            // 遍历所有标记数据
+            for (let key in markedQuestions) {
+                if (markedQuestions.hasOwnProperty(key)) {
+                    const markedList = markedQuestions[key];
+                    if (markedList && markedList.length > 0) {
+                        // 解析key获取数学类型和年份
+                        const [mathType, year] = key.split('_');
+                        totalMarked += markedList.length;
+                        
+                        // 按数学类型统计
+                        if (!mathTypeStats[mathType]) {
+                            mathTypeStats[mathType] = {
+                                total: 0,
+                                years: {}
+                            };
+                        }
+                        mathTypeStats[mathType].total += markedList.length;
+                        mathTypeStats[mathType].years[year] = markedList;
+                    }
+                }
+            }
+            
+            console.log('📊 导出统计:', totalMarked, '道标记题目');
+            console.log('📈 按数学类型统计:', mathTypeStats);
+            
+            if (totalMarked === 0) {
+                alert('没有标记的题目可以导出');
+                return;
+            }
+            
+            // 按数学类型输出
+            Object.keys(mathTypeStats).forEach(mathType => {
+                const stats = mathTypeStats[mathType];
+                exportData += `【${mathType}】(共${stats.total}题)\n`;
+                exportData += '-'.repeat(50) + '\n';
+                
+                // 按年份排序输出
+                Object.keys(stats.years).sort((a, b) => b - a).forEach(year => {
+                    const markedList = stats.years[year].sort((a, b) => a - b);
+                    exportData += `  ${year}年: ${markedList.join('、')} (${markedList.length}题)\n`;
+                });
+                exportData += '\n';
+            });
+            
+            exportData += '='.repeat(60) + '\n';
+            exportData += `总计标记: ${totalMarked} 道题目\n`;
+            exportData += `导出时间: ${new Date().toLocaleString('zh-CN')}\n`;
+            exportData += `导出格式: 文本文件\n`;
+            exportData += `使用说明: 可直接打印或复制到其他文档中使用\n`;
+            
+            // 创建下载
+            const blob = new Blob([exportData], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            // 生成更有意义的文件名
+            const dateStr = new Date().toISOString().slice(0,10);
+            const mathTypes = Object.keys(mathTypeStats).join('-');
+            a.download = `考研数学标记题目_${mathTypes}_${dateStr}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            // 显示更详细的导出结果
+            const mathTypeCount = Object.keys(mathTypeStats).length;
+            alert(`✅ 导出完成！\n\n共导出 ${totalMarked} 道标记题目\n涉及 ${mathTypeCount} 种数学类型\n文件已保存为: ${a.download}`);
+        }
+        
+        // 清空当前标记
+        function clearCurrentMarks() {
+            const key = `${currentMathType}_${selectedYear}`;
+            if (confirm(`确定要清空 ${selectedYear}年${currentMathType} 的所有标记吗？`)) {
+                markedQuestions[key] = [];
+                saveToStorage();
+                updateMarkCount();
+                alert(`已清空 ${selectedYear}年${currentMathType} 的所有标记`);
+            }
+        }
+        
+        // 初始化夜间模式
+        document.addEventListener('DOMContentLoaded', initNightMode);
+        
+        // 初始化显示标记功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const showMarkedBtn = document.getElementById('showMarked');
+            if (showMarkedBtn) {
+                showMarkedBtn.addEventListener('click', function() {
+                    // 加载已保存的标记数据
+                    loadFromStorage();
+                    
+                    console.log('🔄 显示标记，当前数学类型:', currentMathType, '当前年份:', selectedYear);
+                    console.log('📋 所有标记数据:', markedQuestions);
+                    
+                    // 获取当前数学类型和年份的标记题目
+                    const key = `${currentMathType}_${selectedYear}`;
+                    console.log('🔑 使用的键名:', key);
+                    
+                    const markedList = markedQuestions[key] ? markedQuestions[key].sort((a, b) => a - b) : [];
+                    console.log('📝 当前试卷标记题目:', markedList);
+                    
+                    if (markedList.length === 0) {
+                        alert('当前试卷没有标记的题目');
+                        return;
+                    }
+                    
+                    // 显示标记的题目
+                    let message = `${selectedYear}年${currentMathType} 标记的题目:\n\n`;
+                    message += markedList.join('、') + '\n\n';
+                    message += `共 ${markedList.length} 道题目`;
+                    
+                    alert(message);
+                    
+                    // 自动进入刷题模式并跳转到第一个标记题目
+                    currentQuestion = markedList[0];
+                    createPracticeModal();
+                });
+            }
+            
+            // 初始化显示笔记功能
+            const showNotesBtn = document.getElementById('showNotes');
+            if (showNotesBtn) {
+                showNotesBtn.addEventListener('click', function() {
+                    showAllNotes();
+                });
+            }
+        });
+        
+        // 关闭笔记模态框
+        function closeNotesModal(button) {
+            // 找到最外层的模态框元素并移除
+            let modal = button;
+            while (modal && modal.style.position !== 'fixed') {
+                modal = modal.parentElement;
+                if (!modal) break;
+            }
+            // 确保找到的是模态框元素
+            if (modal && modal.style.position === 'fixed') {
+                modal.remove();
+            } else {
+                // 兜底方案：移除最后添加的模态框
+                const modals = document.querySelectorAll('div[style*="position: fixed"]');
+                if (modals.length > 0) {
+                    modals[modals.length - 1].remove();
+                }
+            }
+            // 确保页面恢复正常状态
+            document.body.style.overflow = '';
+        }
+        
+        // 显示所有笔记
+        function showAllNotes() {
+            // 加载已保存的笔记数据
+            loadFromStorage();
+            
+            console.log('🔄 显示笔记，当前数学类型:', currentMathType, '当前年份:', selectedYear);
+            console.log('📋 所有笔记数据:', notes);
+            
+            // 获取当前数学类型和年份的笔记
+            const key = `${currentMathType}_${selectedYear}`;
+            console.log('🔑 使用的键名:', key);
+            
+            const yearNotes = notes[key] ? notes[key] : {};
+            const noteCount = Object.keys(yearNotes).length;
+            console.log('📝 当前试卷笔记数量:', noteCount);
+            
+            if (noteCount === 0) {
+                alert('当前试卷没有保存的笔记');
+                return;
+            }
+            
+            // 构建笔记HTML
+            let notesHtml = `
+                <div style="background: #f5f7fa; padding: 20px; border-radius: 8px; max-height: 80vh; overflow-y: auto;">
+                    <h3 style="margin-top: 0; color: #333; margin-bottom: 20px;">${selectedYear}年${currentMathType} 笔记</h3>
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+            `;
+            
+            // 按题目编号排序显示笔记
+            Object.keys(yearNotes).sort((a, b) => parseInt(a) - parseInt(b)).forEach(questionNumber => {
+                const note = yearNotes[questionNumber];
+                notesHtml += `
+                    <div style="background: white; padding: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                        <h4 style="margin-top: 0; color: #1a73e8; margin-bottom: 10px;">第${questionNumber}题</h4>
+                        <p style="margin: 0; color: #333; line-height: 1.5;">${note}</p>
+                    </div>
+                `;
+            });
+            
+            notesHtml += `
+                    </div>
+                    <div style="margin-top: 20px; text-align: right;">
+                        <button onclick="closeNotesModal(this)" style="padding: 8px 15px; background: #1a73e8; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">关闭</button>
+                    </div>
+                </div>
+            `;
+            
+            // 创建模态框
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 2000;
+                padding: 20px;
+            `;
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: white;
+                border-radius: 12px;
+                width: 90%;
+                max-width: 800px;
+                max-height: 90vh;
+                overflow: hidden;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            `;
+            
+            modalContent.innerHTML = notesHtml;
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            
+            // 防止页面滚动
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // 初始化
+        window.addEventListener('DOMContentLoaded', function() {
+            // 确保currentMathType默认为数学一
+            currentMathType = "数学一";
+            selectedYear = 2025;
+            
+            // 加载数据
+            loadFromStorage();
+            
+            // 初始化UI
+            initTimeline();
+            initChart();
+            updateContent();
+            updateProbabilityCategory();
+            updateMarkCount();
+            
+            // 确保年份框被正确选中
+            setTimeout(function() {
+                const yearHeaders = document.querySelectorAll('.year-header');
+                yearHeaders.forEach(header => {
+                    if (parseInt(header.textContent) === selectedYear) {
+                        header.classList.add('active');
+                    }
+                });
+                
+                const yearPreviews = document.querySelectorAll('.year-preview');
+                yearPreviews.forEach(preview => {
+                    const header = preview.previousElementSibling;
+                    if (header && parseInt(header.textContent) === selectedYear) {
+                        preview.classList.add('selected');
+                    }
+                });
+            }, 50);
+            
+            // 默认展开第一个分类
+            setTimeout(function() {
+                const firstCategory = document.querySelector('.category-title');
+                if (firstCategory) {
+                    firstCategory.click();
+                }
+            }, 100);
+        });
+        
+        // 开始刷题按钮点击事件
+        document.getElementById('startPractice').addEventListener('click', function() {
+            // 加载已保存的数据
+            loadFromStorage();
+            
+            // 如果没有当前题目记录，从第1题开始
+            if (!currentQuestion || currentQuestion < 1 || currentQuestion > 23) {
+                currentQuestion = 1;
+            }
+            
+            // 创建刷题模式界面
+            createPracticeModal();
+        });
+        
+        // 创建刷题模式模态框
+        function createPracticeModal() {
+            // 加载已保存的数据（确保每次都加载最新状态）
+            loadFromStorage();
+            
+            // 检查是否已存在模态框
+            if (document.getElementById('practiceModal')) {
+                const modal = document.getElementById('practiceModal');
+                modal.style.display = 'flex';
+                setTimeout(() => {
+                    modal.classList.add('show');
+                }, 10);
+                
+                // 更新模态框标题
+                document.getElementById('modalTitle').textContent = `${selectedYear}年${currentMathType}真题 - 刷题模式 (第${currentQuestion}题)`;
+                
+                // 重新生成题目导航按钮
+                const questionNav = document.getElementById('questionNav');
+                if (questionNav) {
+                    questionNav.innerHTML = '';
+                    const maxQuestions = (selectedYear >= 2021 && selectedYear <= 2025) ? 22 : 23;
+                    for (let i = 1; i <= maxQuestions; i++) {
+                        const qBtn = document.createElement('button');
+                        qBtn.id = `qBtn${i}`;
+                        qBtn.textContent = i;
+                        qBtn.style.cssText = `
+                            width: 40px;
+                            height: 40px;
+                            border: 1px solid #ddd;
+                            border-radius: 50%;
+                            background: white;
+                            cursor: pointer;
+                            font-size: 14px;
+                            transition: all 0.3s;
+                        `;
+                        qBtn.onclick = function() {
+                            currentQuestion = i;
+                            showQuestion(i);
+                            updateAnswerInput();
+                            updateQuestionButtons();
+                        };
+                        questionNav.appendChild(qBtn);
+                    }
+                }
+                
+                // 显示当前题
+                showQuestion(currentQuestion);
+                updateAnswerInput();
+                updateQuestionButtons();
+                
+                return;
+            }
+            
+            // 加载已保存的数据（这里也保留，确保首次创建时加载）
+            loadFromStorage();
+            
+            // 创建模态框
+            const modal = document.createElement('div');
+            modal.id = 'practiceModal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.8);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 2000;
+            `;
+            
+            // 创建模态框内容
+            const modalContent = document.createElement('div');
+            modalContent.className = 'modal-content';
+            modalContent.style.cssText = `
+                background: white;
+                border-radius: 12px;
+                width: 90%;
+                max-width: 1000px;
+                max-height: 90vh;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+            `;
+            
+            // 模态框头部
+            const modalHeader = document.createElement('div');
+            modalHeader.className = 'modal-header';
+            modalHeader.style.cssText = `
+                padding: 20px;
+                border-bottom: 1px solid #e8e8e8;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: #f5f7fa;
+            `;
+            
+            const modalTitle = document.createElement('h2');
+            modalTitle.id = 'modalTitle';
+            modalTitle.textContent = `${selectedYear}年${currentMathType}真题 - 刷题模式 (第${currentQuestion}题)`;
+            modalTitle.style.cssText = 'font-size: 18px; font-weight: 600; margin: 0;';
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'close-btn';
+            closeBtn.textContent = '×';
+            closeBtn.style.cssText = `
+                background: none;
+                border: none;
+                font-size: 24px;
+                cursor: pointer;
+                color: #666;
+            `;
+            closeBtn.onclick = function() {
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 300);
+            };
+            
+            modalHeader.appendChild(modalTitle);
+            modalHeader.appendChild(closeBtn);
+            
+            // 模态框主体
+            const modalBody = document.createElement('div');
+            modalBody.className = 'modal-body';
+            modalBody.style.cssText = `
+                flex: 1;
+                padding: 30px;
+                overflow-y: auto;
+            `;
+            
+            // 题目导航
+            const questionNav = document.createElement('div');
+            questionNav.id = 'questionNav';
+            questionNav.style.cssText = `
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-bottom: 30px;
+                padding: 20px;
+                background: #fafafa;
+                border-radius: 8px;
+            `;
+            
+            // 生成题目导航按钮
+            const maxQuestions = (selectedYear >= 2021 && selectedYear <= 2025) ? 22 : 23;
+            for (let i = 1; i <= maxQuestions; i++) {
+                const qBtn = document.createElement('button');
+                qBtn.id = `qBtn${i}`;
+                qBtn.textContent = i;
+                qBtn.style.cssText = `
+                    width: 40px;
+                    height: 40px;
+                    border: 1px solid #ddd;
+                    border-radius: 50%;
+                    background: white;
+                    cursor: pointer;
+                    font-size: 14px;
+                    transition: all 0.3s;
+                `;
+                qBtn.onclick = function() {
+                    currentQuestion = i;
+                    showQuestion(i);
+                    updateAnswerInput();
+                    updateQuestionButtons();
+                };
+                questionNav.appendChild(qBtn);
+            }
+            
+            // 题目显示区域
+            const questionArea = document.createElement('div');
+            questionArea.id = 'questionArea';
+            questionArea.style.cssText = `
+                background: #f9f9f9;
+                border-radius: 8px;
+                padding: 30px;
+                margin-bottom: 20px;
+            `;
+            
+            // 检查是否存在对应的图片路径
+            const imagePath = paperImages[currentMathType][selectedYear.toString()];
+            let fileInfoHtml = '';
+            if (imagePath) {
+                fileInfoHtml = `
+                    <div style="background: #e8f0fe; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                        <h4 style="margin-top: 0; color: #1a73e8;">📁 题目图片</h4>
+                        <p>找到对应年份的题目图片，点击下方链接查看：</p>
+                        <a href="./${imagePath}" target="_blank" style="display: inline-block; padding: 10px 20px; background: #1a73e8; color: white; border-radius: 6px; text-decoration: none; margin-top: 10px;">查看 ${selectedYear}年${currentMathType} 题目图片</a>
+                    </div>
+                `;
+            }
+            
+            // 显示第一题
+            showQuestion(currentQuestion);
+            
+            // 答案输入区域
+            const answerArea = document.createElement('div');
+            answerArea.id = 'answerArea';
+            answerArea.style.cssText = `
+                margin-bottom: 30px;
+            `;
+            
+            const answerLabel = document.createElement('label');
+            answerLabel.textContent = '你的答案：';
+            answerLabel.style.cssText = 'font-weight: 600; margin-right: 10px;';
+            
+            const answerInput = document.createElement('input');
+            answerInput.id = 'answerInput';
+            answerInput.type = 'text';
+            answerInput.placeholder = '请输入答案（如：A、B、C、D）';
+            answerInput.style.cssText = `
+                padding: 10px 15px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                font-size: 14px;
+                width: 200px;
+            `;
+            
+            // 标记题目按钮
+            const markBtn = document.createElement('button');
+            markBtn.id = 'markBtn';
+            markBtn.className = 'touch-feedback';
+            markBtn.textContent = '标记题目';
+            markBtn.style.cssText = `
+                margin-left: 15px;
+                padding: 10px 15px;
+                background: #ffb74d;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: all 0.3s;
+            `;
+            markBtn.onclick = function() {
+                toggleMarkQuestion(currentQuestion);
+            };
+            
+            // 查看解析按钮
+            const showAnalysisBtn = document.createElement('button');
+            showAnalysisBtn.id = 'showAnalysisBtn';
+            showAnalysisBtn.className = 'touch-feedback';
+            showAnalysisBtn.textContent = '查看解析';
+            showAnalysisBtn.style.cssText = `
+                margin-left: 15px;
+                padding: 10px 15px;
+                background: #1a73e8;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: all 0.3s;
+            `;
+            showAnalysisBtn.onclick = function() {
+                showAnalysis(currentQuestion);
+            };
+            
+            answerArea.appendChild(answerLabel);
+            answerArea.appendChild(answerInput);
+            answerArea.appendChild(markBtn);
+            answerArea.appendChild(showAnalysisBtn);
+            
+            // 笔记输入区域
+            const notesArea = document.createElement('div');
+            notesArea.id = 'notesArea';
+            notesArea.style.cssText = `
+                margin-bottom: 20px;
+                padding: 15px;
+                background: #f5f7fa;
+                border-radius: 8px;
+            `;
+            
+            const notesLabel = document.createElement('label');
+            notesLabel.textContent = '笔记：';
+            notesLabel.style.cssText = 'font-weight: 600; display: block; margin-bottom: 10px;';
+            
+            const notesTextarea = document.createElement('textarea');
+            notesTextarea.id = 'notesTextarea';
+            notesTextarea.placeholder = '在这里添加你的笔记...';
+            notesTextarea.style.cssText = `
+                width: 100%;
+                height: 100px;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                font-size: 14px;
+                resize: vertical;
+                font-family: 'Microsoft YaHei', 'PingFang SC', Arial, sans-serif;
+            `;
+            
+            const saveNotesBtn = document.createElement('button');
+            saveNotesBtn.id = 'saveNotesBtn';
+            saveNotesBtn.className = 'touch-feedback';
+            saveNotesBtn.textContent = '保存笔记';
+            saveNotesBtn.style.cssText = `
+                margin-top: 10px;
+                padding: 8px 15px;
+                background: #9c27b0;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: all 0.3s;
+            `;
+            saveNotesBtn.onclick = function() {
+                saveNotes(currentQuestion);
+            };
+            
+            notesArea.appendChild(notesLabel);
+            notesArea.appendChild(notesTextarea);
+            notesArea.appendChild(saveNotesBtn);
+            
+            // 反馈区域
+            const feedbackArea = document.createElement('div');
+            feedbackArea.id = 'feedbackArea';
+            feedbackArea.style.cssText = `
+                margin-bottom: 20px;
+                min-height: 50px;
+            `;
+            
+            // 模态框底部
+            const modalFooter = document.createElement('div');
+            modalFooter.className = 'modal-footer';
+            modalFooter.style.cssText = `
+                padding: 20px;
+                border-top: 1px solid #e8e8e8;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: #f5f7fa;
+            `;
+            
+            // 计时器
+            const timer = document.createElement('div');
+            timer.id = 'timer';
+            timer.textContent = '时间：00:00';
+            timer.style.cssText = 'font-size: 16px; font-weight: 600;';
+            
+            // 导航按钮
+            const navButtons = document.createElement('div');
+            navButtons.className = 'navButtons';
+            navButtons.style.cssText = 'display: flex; gap: 10px;';
+            
+            const prevBtn = document.createElement('button');
+            prevBtn.textContent = '上一题';
+            prevBtn.className = 'btn btn-secondary touch-feedback';
+            prevBtn.onclick = function() {
+                if (currentQuestion > 1) {
+                    // 保存当前答案
+                    saveAnswer();
+                    currentQuestion--;
+                    showQuestion(currentQuestion);
+                    updateAnswerInput();
+                    updateQuestionButtons();
+                }
+            };
+            
+            const nextBtn = document.createElement('button');
+    nextBtn.textContent = '下一题';
+    nextBtn.className = 'btn btn-secondary touch-feedback';
+    nextBtn.onclick = function() {
+        const maxQuestions = (selectedYear >= 2021 && selectedYear <= 2025) ? 22 : 23;
+        if (currentQuestion < maxQuestions) {
+            // 保存当前答案
+            saveAnswer();
+            currentQuestion++;
+            showQuestion(currentQuestion);
+            updateAnswerInput();
+            updateQuestionButtons();
+        }
+    };
+            
+            const submitBtn = document.createElement('button');
+            submitBtn.textContent = '提交答案';
+            submitBtn.className = 'btn btn-primary touch-feedback';
+            submitBtn.onclick = function() {
+                saveAnswer();
+                showResults();
+            };
+            
+            navButtons.appendChild(prevBtn);
+            navButtons.appendChild(nextBtn);
+            navButtons.appendChild(submitBtn);
+            
+            modalFooter.appendChild(timer);
+            modalFooter.appendChild(navButtons);
+            
+            // 组装模态框
+            modalBody.appendChild(questionNav);
+            modalBody.appendChild(questionArea);
+            modalBody.appendChild(answerArea);
+            modalBody.appendChild(notesArea);
+            modalBody.appendChild(feedbackArea);
+            
+            modalContent.appendChild(modalHeader);
+            modalContent.appendChild(modalBody);
+            modalContent.appendChild(modalFooter);
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+            
+            // 触发动画
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10);
+            
+            // 开始计时
+            startTimer();
+            
+            // 显示第一题
+            showQuestion(currentQuestion);
+            
+            // 更新答案输入和题目按钮
+            updateAnswerInput();
+            updateQuestionButtons();
+        }
+        
+        // 显示指定题目
+        function showQuestion(questionNumber) {
+            const questionArea = document.getElementById('questionArea');
+            if (!questionArea) return;
+            
+            // 获取对应年份的图片路径
+            const imagePath = paperImages[currentMathType][selectedYear.toString()];
+            
+            // 根据题目编号确定对应的图片 - 第i题对应i.png
+            const imageIndex = Math.min(questionNumber, 23);
+            let imageFile = imageIndex.toString().padStart(2, '0') + '.png';
+            // 同时尝试加载两种可能的命名格式
+            const imageFileAlt = imageIndex.toString() + '.png';
+            
+            // 确定题目类型和分数
+            let questionType, questionScore;
+            if (selectedYear >= 2021 && selectedYear <= 2025) {
+                // 2021-2024年：10+6+6结构
+                if (questionNumber <= 10) {
+                    questionType = "选择题";
+                    questionScore = "5分";
+                } else if (questionNumber <= 16) {
+                    questionType = "填空题";
+                    questionScore = "5分";
+                } else {
+                    questionType = "解答题";
+                    questionScore = "约11.7分";
+                }
+            } else {
+                // 2009-2020年：8+6+9结构
+                if (questionNumber <= 8) {
+                    questionType = "选择题";
+                    questionScore = "4分";
+                } else if (questionNumber <= 14) {
+                    questionType = "填空题";
+                    questionScore = "4分";
+                } else {
+                    questionType = "解答题";
+                    questionScore = "10-11分";
+                }
+            }
+            
+            // 检查当前题目是否被标记
+            const key = `${currentMathType}_${selectedYear}`;
+            const isMarked = markedQuestions[key] && markedQuestions[key].includes(questionNumber);
+            
+            // 构建题目HTML
+            let questionHtml = `
+                <div style="margin-bottom: 20px;">
+                    <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 15px;">
+                        ${questionType === "选择题" ? '一' : questionType === "填空题" ? '二' : '三'}、${questionType}（第${questionNumber}题，${questionScore}）
+                        ${isMarked ? '<span style="color: #ff9800; margin-left: 10px; font-size: 14px;">⭐ 已标记</span>' : ''}
+                    </h3>
+                </div>
+            `;
+            
+            // 添加图片
+            if (imagePath) {
+                questionHtml += `
+                    <div style="position: relative; max-width: 100%;">
+                        <img src="./${imagePath}/${imageFile}" alt="第${questionNumber}题图片" style="max-width: 100%; height: auto; border-radius: 4px; margin-bottom: 20px;" onError="this.style.display='none'; document.getElementById('altImage${questionNumber}').style.display='block';">
+                        <img id="altImage${questionNumber}" src="./${imagePath}/${imageFileAlt}" alt="第${questionNumber}题图片" style="max-width: 100%; height: auto; border-radius: 4px; margin-bottom: 20px; display: none;" onError="this.style.display='none';">
+                    </div>
+                `;
+            } else {
+                questionHtml += `
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                        <h4 style="margin-top: 0; color: #856404;">⚠️ 提示</h4>
+                        <p>未找到对应年份的题目图片</p>
+                    </div>
+                `;
+            }
+            
+            // 添加解答题输入框（在图片下方）
+            if (questionNumber > 14) {
+                questionHtml += `
+                    <div style="margin-top: 20px;">
+                        <textarea placeholder="请在此处写出你的解答过程..." style="width: 100%; height: 150px; padding: 15px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; resize: vertical;"></textarea>
+                    </div>
+                `;
+            }
+            
+            questionArea.innerHTML = questionHtml;
+            
+            // 更新模态框标题
+            const modalTitle = document.getElementById('modalTitle');
+            if (modalTitle) {
+                modalTitle.textContent = `${selectedYear}年${currentMathType}真题 - 刷题模式 (第${questionNumber}题)`;
+            }
+        }
+        
+        // 保存当前答案
+        function saveAnswer() {
+            const answerInput = document.getElementById('answerInput');
+            if (answerInput) {
+                const key = `${currentMathType}_${selectedYear}`;
+                if (!answers[key]) {
+                    answers[key] = {};
+                }
+                const answer = answerInput.value.trim();
+                if (answer) {
+                    answers[key][currentQuestion] = answer;
+                } else {
+                    delete answers[key][currentQuestion];
+                }
+                saveToStorage(); // 保存到localStorage
+                updateQuestionButtons();
+            }
+        }
+        
+        // 保存笔记
+        function saveNotes(questionNumber) {
+            const notesTextarea = document.getElementById('notesTextarea');
+            if (notesTextarea) {
+                const key = `${currentMathType}_${selectedYear}`;
+                if (!notes[key]) {
+                    notes[key] = {};
+                }
+                const note = notesTextarea.value.trim();
+                if (note) {
+                    notes[key][questionNumber] = note;
+                } else {
+                    delete notes[key][questionNumber];
+                }
+                saveToStorage(); // 保存到localStorage
+                
+                // 显示保存成功提示
+                const feedbackArea = document.getElementById('feedbackArea');
+                if (feedbackArea) {
+                    feedbackArea.innerHTML = `
+                        <div style="background: #e8f5e8; padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+                            <p style="color: #2e7d32; margin: 0;">笔记保存成功！</p>
+                        </div>
+                    `;
+                    // 3秒后清除提示
+                    setTimeout(() => {
+                        feedbackArea.innerHTML = '';
+                    }, 3000);
+                }
+            }
+        }
+        
+        // 更新答案输入框
+        function updateAnswerInput() {
+            const currentKey = `${currentMathType}_${selectedYear}`;
+            console.log('🔄 更新答案输入框，key:', currentKey);
+            
+            const answerInput = document.getElementById('answerInput');
+            if (answerInput) {
+                answerInput.value = (answers[currentKey] && answers[currentKey][currentQuestion]) || '';
+            }
+            
+            // 更新笔记输入框
+            const notesTextarea = document.getElementById('notesTextarea');
+            if (notesTextarea) {
+                notesTextarea.value = (notes[currentKey] && notes[currentKey][currentQuestion]) || '';
+            }
+            
+            // 更新标记按钮状态
+            const markBtn = document.getElementById('markBtn');
+            if (markBtn) {
+                if (markedQuestions[currentKey] && markedQuestions[currentKey].includes(currentQuestion)) {
+                    markBtn.textContent = '取消标记';
+                    markBtn.style.background = '#e57373';
+                } else {
+                    markBtn.textContent = '标记题目';
+                    markBtn.style.background = '#ffb74d';
+                }
+            }
+            
+            // 清空反馈区域
+            const feedbackArea = document.getElementById('feedbackArea');
+            if (feedbackArea) {
+                feedbackArea.innerHTML = '';
+            }
+        }
+        
+        // 切换题目标记状态
+        function toggleMarkQuestion(questionNumber) {
+            // 确保使用当前选中的数学类型和年份
+            const currentKey = `${currentMathType}_${selectedYear}`;
+            console.log('🔄 切换标记状态:', questionNumber, 'key:', currentKey);
+            
+            // 确保markedQuestions对象存在
+            if (!markedQuestions) {
+                markedQuestions = {};
+                console.log('📋 初始化markedQuestions为空对象');
+            }
+            
+            // 确保当前试卷的标记数组存在
+            if (!markedQuestions[currentKey]) {
+                markedQuestions[currentKey] = [];
+                console.log('📋 初始化', currentKey, '为数组');
+            }
+            
+            // 切换标记状态
+            const index = markedQuestions[currentKey].indexOf(questionNumber);
+            if (index > -1) {
+                markedQuestions[currentKey].splice(index, 1);
+                console.log('✅ 取消标记题目:', questionNumber);
+            } else {
+                markedQuestions[currentKey].push(questionNumber);
+                // 对标记数组进行排序，确保题号顺序正确
+                markedQuestions[currentKey].sort((a, b) => a - b);
+                console.log('✅ 已标记题目:', questionNumber);
+            }
+            
+            console.log('📋 当前标记状态:', markedQuestions);
+            
+            // 保存到localStorage
+            saveToStorage();
+            
+            // 更新界面显示
+            updateQuestionButtons();
+            updateAnswerInput();
+            updateMarkCount();
+        }
+        
+        // 更新题目按钮状态
+        function updateQuestionButtons() {
+            const maxQuestions = (selectedYear >= 2021 && selectedYear <= 2025) ? 22 : 23;
+            const currentKey = `${currentMathType}_${selectedYear}`;
+            console.log('🔄 更新题目按钮状态，key:', currentKey);
+            
+            for (let i = 1; i <= maxQuestions; i++) {
+                const btn = document.getElementById(`qBtn${i}`);
+                if (btn) {
+                    // 重置样式
+                    btn.style.cssText = `
+                        width: 40px;
+                        height: 40px;
+                        border: 1px solid #ddd;
+                        border-radius: 50%;
+                        background: white;
+                        cursor: pointer;
+                        font-size: 14px;
+                        transition: all 0.3s;
+                    `;
+                    
+                    // 已回答的题目
+                    if (answers[currentKey] && answers[currentKey][i]) {
+                        btn.style.background = '#4caf50';
+                        btn.style.color = 'white';
+                    }
+                    
+                    // 标记的题目
+                    if (markedQuestions[currentKey] && markedQuestions[currentKey].includes(i)) {
+                        btn.style.background = '#ffb74d';
+                        btn.style.color = 'white';
+                    }
+                    
+                    // 当前题目
+                    if (i === currentQuestion) {
+                        btn.style.background = '#1a73e8';
+                        btn.style.color = 'white';
+                    }
+                }
+            }
+        }
+        
+        // 显示答题结果
+        function showResults() {
+            const feedbackArea = document.getElementById('feedbackArea');
+            if (feedbackArea) {
+                const key = `${currentMathType}_${selectedYear}`;
+                const answeredCount = answers[key] ? Object.keys(answers[key]).length : 0;
+                const markedCount = markedQuestions[key] ? markedQuestions[key].length : 0;
+                const markedQuestionsList = markedQuestions[key] ? markedQuestions[key].sort((a, b) => a - b).join('、') : '无';
+                const maxQuestions = (selectedYear >= 2021 && selectedYear <= 2025) ? 22 : 23;
+                
+                feedbackArea.innerHTML = `
+                    <div style="background: #e8f5e8; padding: 15px; border-radius: 6px;">
+                        <h4 style="margin-top: 0; color: #2e7d32;">📊 答题统计</h4>
+                        <p>已回答题目：${answeredCount}/${maxQuestions}</p>
+                        <p>标记题目：${markedCount} ${markedCount > 0 ? `(${markedQuestionsList})` : ''}</p>
+                        <p style="margin-top: 15px;">答题完成！你可以查看详细解析或返回继续练习。</p>
+                        ${markedCount > 0 ? `
+                        <button onclick="jumpToMarkedQuestions()" style="margin-top: 10px; padding: 8px 15px; background: #ffb74d; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">查看标记题目</button>
+                        ` : ''}
+                    </div>
+                `;
+            }
+        }
+        
+        // 跳转到标记题目
+        function jumpToMarkedQuestions() {
+            const key = `${currentMathType}_${selectedYear}`;
+            const markedList = markedQuestions[key] ? markedQuestions[key].sort((a, b) => a - b) : [];
+            
+            if (markedList.length > 0) {
+                currentQuestion = markedList[0];
+                showQuestion(currentQuestion);
+                updateAnswerInput();
+                updateQuestionButtons();
+            }
+        }
+        
+
+        
+        // 查看解析
+        function showAnalysis(questionNumber) {
+            const questionArea = document.getElementById('questionArea');
+            if (!questionArea) return;
+            
+            // 获取对应年份的答案图片路径（解析也在同一个目录）
+            const answerPath = answerImages[currentMathType][selectedYear.toString()];
+            
+            // 构建解析HTML，参考用户提供的界面
+            let analysisHtml = `
+                <div class="analysis-display mt-3" style="display: block; margin-top: 20px; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;">
+                    <!-- 购买链接 -->
+                    <div class="mb-2" style="font-size: 14px; color: #bc0000; font-weight: bold;">
+                        <a href="#" target="_blank" style="text-decoration: none;">
+                            <span>本解析节选自《李艳芳真题及解析》</span>
+                        </a>
+                    </div>
+                    <div class="border-top pt-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="text-muted mb-0" style="font-size: 1em; color: #6c757d;">解析</h6>
+                        </div>
+                        <div class="analysis-content">
+                            <div id="analysisImages" class="analysis-image-container text-center" style="max-width: 100%; overflow: hidden; margin-bottom: 15px;"></div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px; display: flex; gap: 10px;">
+                        <button onclick="hideAnalysis()" style="padding: 8px 15px; background: #f5f5f5; color: #333; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-size: 14px;">关闭解析</button>
+                        <a href="./${answerPath}" target="_blank" style="padding: 8px 15px; background: #1a73e8; color: white; border: none; border-radius: 6px; text-decoration: none; font-size: 14px;">查看完整解析</a>
+                    </div>
+                </div>
+            `;
+            
+            // 检查是否已存在解析区域
+            const existingAnalysis = questionArea.querySelector('.analysis-section');
+            if (existingAnalysis) {
+                existingAnalysis.remove();
+            }
+            
+            // 添加解析区域
+            const analysisSection = document.createElement('div');
+            analysisSection.className = 'analysis-section';
+            analysisSection.innerHTML = analysisHtml;
+            questionArea.appendChild(analysisSection);
+            
+            // 动态加载解析图片
+            if (answerPath) {
+                loadAnalysisImages(answerPath, questionNumber);
+            }
+        }
+        
+        // 解析图片ID数据（从sort_images.py提取）
+        const analysisImageIds = {
+            "数学一": {
+                2025: [665, 663, 664, 659, 660, 662, 661, 644, 645, 653, 652, 650, 651, 646, 647, 649, 648, 657, 658, 655, 654, 656],
+                2024: [687, 685, 686, 681, 682, 684, 683, 666, 667, 675, 674, 672, 673, 668, 669, 671, 670, 679, 680, 677, 676, 678],
+                2023: [709, 707, 708, 703, 704, 706, 705, 688, 689, 697, 696, 694, 695, 690, 691, 693, 692, 701, 702, 699, 698, 700],
+                2022: [731, 729, 730, 725, 726, 728, 727, 710, 711, 719, 718, 716, 717, 712, 713, 715, 714, 723, 724, 721, 720, 722],
+                2021: [753, 751, 752, 747, 748, 750, 749, 732, 733, 741, 740, 738, 739, 734, 735, 737, 736, 745, 746, 743, 742, 744],
+                2020: [891, 889, 890, 885, 886, 888, 887, 869, 870, 878, 877, 875, 876, 871, 872, 874, 873, 883, 884, 880, 879, 881, 882],
+                2019: [868, 866, 867, 862, 863, 865, 864, 846, 847, 855, 854, 852, 853, 848, 849, 851, 850, 860, 861, 857, 856, 858, 859],
+                2018: [845, 843, 844, 839, 840, 842, 841, 823, 824, 832, 831, 829, 830, 825, 826, 828, 827, 837, 838, 834, 833, 835, 836],
+                2017: [822, 820, 821, 816, 817, 819, 818, 800, 801, 809, 808, 806, 807, 802, 803, 805, 804, 814, 815, 811, 810, 812, 813],
+                2016: [799, 797, 798, 793, 794, 796, 795, 777, 778, 786, 785, 783, 784, 779, 780, 782, 781, 791, 792, 788, 787, 789, 790],
+                2015: [776, 774, 775, 770, 771, 773, 772, 754, 755, 763, 762, 760, 761, 756, 757, 759, 758, 768, 769, 765, 764, 766, 767],
+                2014: [1572, 1573, 1574, 1575, 1576, 1577, 1578, 1579, 1580, 1581, 1582, 1583, 1584, 1585, 1586, 1587, 1588, 1589, 1590, 1591, 1592, 1593, 1594],
+                2013: [1549, 1550, 1551, 1552, 1553, 1554, 1555, 1556, 1557, 1558, 1559, 1560, 1561, 1562, 1563, 1564, 1565, 1566, 1567, 1568, 1569, 1570, 1571],
+                2012: [1526, 1527, 1528, 1529, 1530, 1531, 1532, 1533, 1534, 1535, 1536, 1537, 1538, 1539, 1540, 1541, 1542, 1543, 1544, 1545, 1546, 1547, 1548],
+                2011: [1503, 1504, 1505, 1506, 1507, 1508, 1509, 1510, 1511, 1512, 1513, 1514, 1515, 1516, 1517, 1518, 1519, 1520, 1521, 1522, 1523, 1524, 1525],
+                2010: [1480, 1481, 1482, 1483, 1484, 1485, 1486, 1487, 1488, 1489, 1490, 1491, 1492, 1493, 1494, 1495, 1496, 1497, 1498, 1499, 1500, 1501, 1502],
+                2009: [1457, 1458, 1459, 1460, 1461, 1462, 1463, 1464, 1465, 1466, 1467, 1468, 1469, 1470, 1471, 1472, 1473, 1474, 1475, 1476, 1477, 1478, 1479]
+            },
+            "数学二": {
+                2025: [936, 934, 935, 930, 931, 933, 932, 915, 916, 924, 923, 921, 922, 917, 918, 920, 919, 928, 929, 926, 925, 927],
+                2024: [958, 956, 957, 952, 953, 955, 954, 937, 938, 946, 945, 943, 944, 939, 940, 942, 941, 950, 951, 948, 947, 949],
+                2023: [980, 978, 979, 974, 975, 977, 976, 959, 960, 968, 967, 965, 966, 961, 962, 964, 963, 972, 973, 970, 969, 971],
+                2022: [1002, 1000, 1001, 996, 997, 999, 998, 981, 982, 990, 989, 987, 988, 983, 984, 986, 985, 994, 995, 992, 991, 993],
+                2021: [1024, 1022, 1023, 1018, 1019, 1021, 1020, 1003, 1004, 1012, 1011, 1009, 1010, 1005, 1006, 1008, 1007, 1016, 1017, 1014, 1013, 1015],
+                2020: [1162, 1160, 1161, 1156, 1157, 1159, 1158, 1140, 1141, 1149, 1148, 1146, 1147, 1142, 1143, 1145, 1144, 1154, 1155, 1151, 1150, 1152, 1153],
+                2019: [1139, 1137, 1138, 1133, 1134, 1136, 1135, 1117, 1118, 1126, 1125, 1123, 1124, 1119, 1120, 1122, 1121, 1131, 1132, 1128, 1127, 1129, 1130],
+                2018: [1116, 1114, 1115, 1110, 1111, 1113, 1112, 1094, 1095, 1103, 1102, 1100, 1101, 1096, 1097, 1099, 1098, 1108, 1109, 1105, 1104, 1106, 1107],
+                2017: [1093, 1091, 1092, 1087, 1088, 1090, 1089, 1071, 1072, 1080, 1079, 1077, 1078, 1073, 1074, 1076, 1075, 1085, 1086, 1082, 1081, 1083, 1084],
+                2016: [1070, 1068, 1069, 1064, 1065, 1067, 1066, 1048, 1049, 1057, 1056, 1054, 1055, 1050, 1051, 1053, 1052, 1062, 1063, 1059, 1058, 1060, 1061],
+                2015: [1047, 1045, 1046, 1041, 1042, 1044, 1043, 1025, 1026, 1034, 1033, 1031, 1032, 1027, 1028, 1030, 1029, 1039, 1040, 1036, 1035, 1037, 1038],
+                2014: [1733, 1734, 1735, 1736, 1737, 1738, 1739, 1740, 1741, 1742, 1743, 1744, 1745, 1746, 1747, 1748, 1749, 1750, 1751, 1752, 1753, 1754, 1755],
+                2013: [1710, 1711, 1712, 1713, 1714, 1715, 1716, 1717, 1718, 1719, 1720, 1721, 1722, 1723, 1724, 1725, 1726, 1727, 1728, 1729, 1730, 1731, 1732],
+                2012: [1687, 1688, 1689, 1690, 1691, 1692, 1693, 1694, 1695, 1696, 1697, 1698, 1699, 1700, 1701, 1702, 1703, 1704, 1705, 1706, 1707, 1708, 1709],
+                2011: [1664, 1665, 1666, 1667, 1668, 1669, 1670, 1671, 1672, 1673, 1674, 1675, 1676, 1677, 1678, 1679, 1680, 1681, 1682, 1683, 1684, 1685, 1686],
+                2010: [1641, 1642, 1643, 1644, 1645, 1646, 1647, 1648, 1649, 1650, 1651, 1652, 1653, 1654, 1655, 1656, 1657, 1658, 1659, 1660, 1661, 1662, 1663],
+                2009: [1618, 1619, 1620, 1621, 1622, 1623, 1624, 1625, 1626, 1627, 1628, 1629, 1630, 1631, 1632, 1633, 1634, 1635, 1636, 1637, 1638, 1639, 1640]
+            },
+            "数学三": {
+                2025: [1207, 1205, 1206, 1201, 1202, 1204, 1203, 1186, 1187, 1195, 1194, 1192, 1193, 1188, 1189, 1191, 1190, 1199, 1200, 1197, 1196, 1198],
+                2024: [1229, 1227, 1228, 1223, 1224, 1226, 1225, 1208, 1209, 1217, 1216, 1214, 1215, 1210, 1211, 1213, 1212, 1221, 1222, 1219, 1218, 1220],
+                2023: [1251, 1249, 1250, 1245, 1246, 1248, 1247, 1230, 1231, 1239, 1238, 1236, 1237, 1232, 1233, 1235, 1234, 1243, 1244, 1241, 1240, 1242],
+                2022: [1273, 1271, 1272, 1267, 1268, 1270, 1269, 1252, 1253, 1261, 1260, 1258, 1259, 1254, 1255, 1257, 1256, 1265, 1266, 1263, 1262, 1264],
+                2021: [1295, 1293, 1294, 1289, 1290, 1292, 1291, 1274, 1275, 1283, 1282, 1280, 1281, 1276, 1277, 1279, 1278, 1287, 1288, 1285, 1284, 1286],
+                2020: [1433, 1431, 1432, 1427, 1428, 1430, 1429, 1411, 1412, 1420, 1419, 1417, 1418, 1413, 1414, 1416, 1415, 1425, 1426, 1422, 1421, 1423, 1424],
+                2019: [1410, 1408, 1409, 1404, 1405, 1407, 1406, 1388, 1389, 1397, 1396, 1394, 1395, 1390, 1391, 1393, 1392, 1402, 1403, 1399, 1398, 1400, 1401],
+                2018: [1387, 1385, 1386, 1381, 1382, 1384, 1383, 1365, 1366, 1374, 1373, 1371, 1372, 1367, 1368, 1370, 1369, 1379, 1380, 1376, 1375, 1377, 1378],
+                2017: [1364, 1362, 1363, 1358, 1359, 1361, 1360, 1342, 1343, 1351, 1350, 1348, 1349, 1344, 1345, 1347, 1346, 1356, 1357, 1353, 1352, 1354, 1355],
+                2016: [1341, 1339, 1340, 1335, 1336, 1338, 1337, 1319, 1320, 1328, 1327, 1325, 1326, 1321, 1322, 1324, 1323, 1333, 1334, 1330, 1329, 1331, 1332],
+                2015: [1318, 1316, 1317, 1312, 1313, 1315, 1314, 1296, 1297, 1305, 1304, 1302, 1303, 1298, 1299, 1301, 1300, 1310, 1311, 1307, 1306, 1308, 1309],
+                2014: [1894, 1895, 1896, 1897, 1898, 1899, 1900, 1901, 1902, 1903, 1904, 1905, 1906, 1907, 1908, 1909, 1910, 1911, 1912, 1913, 1914, 1915, 1916],
+                2013: [1871, 1872, 1873, 1874, 1875, 1876, 1877, 1878, 1879, 1880, 1881, 1882, 1883, 1884, 1885, 1886, 1887, 1888, 1889, 1890, 1891, 1892, 1893],
+                2012: [1848, 1849, 1850, 1851, 1852, 1853, 1854, 1855, 1856, 1857, 1858, 1859, 1860, 1861, 1862, 1863, 1864, 1865, 1866, 1867, 1868, 1869, 1870],
+                2011: [1825, 1826, 1827, 1828, 1829, 1830, 1831, 1832, 1833, 1834, 1835, 1836, 1837, 1838, 1839, 1840, 1841, 1842, 1843, 1844, 1845, 1846, 1847],
+                2010: [1802, 1803, 1804, 1805, 1806, 1807, 1808, 1809, 1810, 1811, 1812, 1813, 1814, 1815, 1816, 1817, 1818, 1819, 1820, 1821, 1822, 1823, 1824],
+                2009: [1779, 1780, 1781, 1782, 1783, 1784, 1785, 1786, 1787, 1788, 1789, 1790, 1791, 1792, 1793, 1794, 1795, 1796, 1797, 1798, 1799, 1800, 1801]
+            }
+        };
+
+        // 动态加载解析图片
+        function loadAnalysisImages(answerPath, questionNumber) {
+            const imagesContainer = document.getElementById('analysisImages');
+            if (!imagesContainer) return;
+            
+            // 清空容器
+            imagesContainer.innerHTML = '';
+            
+            // 生成可能的图片文件名（根据sort_images.py的命名规则）
+            const questionNumberStr = questionNumber.toString().padStart(2, '0');
+            
+            // 获取当前年份和数学类型的图片ID列表
+            const imageIds = analysisImageIds[currentMathType] && analysisImageIds[currentMathType][selectedYear] ? analysisImageIds[currentMathType][selectedYear] : [];
+            
+            if (imageIds.length === 0) {
+                // 如果没有找到对应年份的图片ID列表，显示错误信息
+                imagesContainer.innerHTML = `
+                    <p style="color: #666; margin-bottom: 10px;">无法直接加载解析图片，请点击下方链接查看完整解析</p>
+                `;
+                return;
+            }
+            
+            // 确保题目编号在有效范围内
+            const index = questionNumber - 1;
+            if (index < 0 || index >= imageIds.length) {
+                imagesContainer.innerHTML = `
+                    <p style="color: #666; margin-bottom: 10px;">无法直接加载解析图片，请点击下方链接查看完整解析</p>
+                `;
+                return;
+            }
+            
+            // 获取对应题目的图片ID
+            const imageId = imageIds[index];
+            
+            // 尝试加载解析图片
+            const img = document.createElement('img');
+            img.src = `./${answerPath}/${questionNumberStr}_${imageId}.png`;
+            img.alt = `第${questionNumber}题解析`;
+            img.style.cssText = 'max-width: 100%; height: auto; border-radius: 4px;';
+            
+            img.onerror = function() {
+                // 如果图片加载失败，显示错误信息
+                imagesContainer.innerHTML = `
+                    <p style="color: #666; margin-bottom: 10px;">无法直接加载解析图片，请点击下方链接查看完整解析</p>
+                `;
+            };
+            
+            img.onload = function() {
+                imagesContainer.appendChild(img);
+            };
+            
+            // 手动触发图片加载
+            if (img.complete) {
+                img.onload();
+            }
+        }
+        
+        // 隐藏解析
+        function hideAnalysis() {
+            const questionArea = document.getElementById('questionArea');
+            if (!questionArea) return;
+            
+            const analysisSection = questionArea.querySelector('.analysis-section');
+            if (analysisSection) {
+                analysisSection.remove();
+            }
+        }
+        
+        // 开始计时器
+        function startTimer() {
+            const timer = document.getElementById('timer');
+            if (!timer) return;
+            
+            let seconds = 0;
+            setInterval(function() {
+                seconds++;
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                timer.textContent = `时间：${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+        
+        // 查看PDF功能
+        function viewPDF() {
+            // 构建PDF文件路径
+            let pdfPath = `Pdf/${currentMathType}/`;
+            
+            // 根据年份和数学类型构建文件名
+            let fileName;
+            // 构建标准文件名格式
+            let mathCode;
+            if (currentMathType === '数学一') mathCode = '301';
+            else if (currentMathType === '数学二') mathCode = '302';
+            else mathCode = '303';
+            
+            if (selectedYear === 2023 || selectedYear === 2024 || selectedYear === 2025) {
+                fileName = `${selectedYear}年${mathCode}数学(${currentMathType.charAt(2)})真题回忆.pdf`;
+            } else {
+                fileName = `${selectedYear}年${mathCode}${currentMathType}真题回忆.pdf`;
+            }
+            
+            pdfPath += fileName;
+            
+            // 在新标签页中打开PDF文件
+            window.open(pdfPath, '_blank');
+            
+            // 检查文件是否存在
+            setTimeout(() => {
+                console.log('PDF查看尝试:', pdfPath);
+            }, 1000);
+        }
+        
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试localStorage</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        .output {
+            background: #f5f5f5;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>localStorage 测试工具</h1>
+    
+    <div>
+        <button onclick="testSave()">保存测试数据</button>
+        <button onclick="testLoad()">加载测试数据</button>
+        <button onclick="clearStorage()">清空所有数据</button>
+        <button onclick="viewAll()">查看所有数据</button>
+    </div>
+    
+    <div class="output" id="output">点击按钮开始测试...</div>
+    
+    <script>
+        function log(message) {
+            document.getElementById('output').textContent = message;
+        }
+        
+        function testSave() {
+            try {
+                // 保存标记数据
+                const markedQuestions = ['2025_1', '2025_3', '2025_5'];
+                localStorage.setItem('markedQuestions', JSON.stringify(markedQuestions));
+                
+                // 保存答案数据
+                const answers = {
+                    '2025_1': 'A',
+                    '2025_2': 'B',
+                    '2025_3': 'C'
+                };
+                localStorage.setItem('answers', JSON.stringify(answers));
+                
+                log('✅ 数据保存成功！\n\n' +
+                    '标记的题目: ' + markedQuestions.join(', ') + '\n' +
+                    '答案记录: ' + Object.keys(answers).length + ' 条');
+            } catch (e) {
+                log('❌ 保存失败: ' + e.message);
+            }
+        }
+        
+        function testLoad() {
+            try {
+                const markedData = localStorage.getItem('markedQuestions');
+                const answersData = localStorage.getItem('answers');
+                
+                if (!markedData && !answersData) {
+                    log('⚠️ 没有找到保存的数据');
+                    return;
+                }
+                
+                let output = '✅ 数据加载成功！\n\n';
+                
+                if (markedData) {
+                    const marked = JSON.parse(markedData);
+                    output += '标记的题目 (' + marked.length + ' 条):\n';
+                    output += marked.join('\n') + '\n\n';
+                }
+                
+                if (answersData) {
+                    const answers = JSON.parse(answersData);
+                    output += '答案记录 (' + Object.keys(answers).length + ' 条):\n';
+                    for (let key in answers) {
+                        output += key + ' = ' + answers[key] + '\n';
+                    }
+                }
+                
+                log(output);
+            } catch (e) {
+                log('❌ 加载失败: ' + e.message);
+            }
+        }
+        
+        function clearStorage() {
+            if (confirm('确定要清空所有数据吗？')) {
+                localStorage.clear();
+                log('✅ 所有数据已清空');
+            }
+        }
+        
+        function viewAll() {
+            try {
+                let output = '📦 localStorage 中的所有数据:\n\n';
+                
+                if (localStorage.length === 0) {
+                    output += '(空)';
+                } else {
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        const value = localStorage.getItem(key);
+                        output += key + ':\n' + value + '\n\n';
+                    }
+                }
+                
+                log(output);
+            } catch (e) {
+                log('❌ 读取失败: ' + e.message);
+            }
+        }
+        
+        // 页面加载时自动显示所有数据
+        window.onload = function() {
+            viewAll();
+        };
+    </script>
+</body>
+</html>
